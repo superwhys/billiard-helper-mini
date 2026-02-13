@@ -1,0 +1,118 @@
+/* components/record-card/index.wxss */
+.record-card {
+    padding: 28rpx;
+    border-radius: 28rpx;
+    background: rgba(19, 33, 29, 0.92);
+    border: 2rpx solid rgba(72, 108, 94, 0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 20rpx;
+    box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    display: flex;
+    flex-direction: column;
+    gap: 8rpx;
+}
+
+.card-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.card-title {
+    font-size: 28rpx;
+    font-weight: 600;
+    color: #e6f5ef;
+}
+
+.card-status {
+    font-size: 20rpx;
+    padding: 4rpx 16rpx;
+    border-radius: 999rpx;
+    color: rgba(214, 236, 227, 0.7);
+    background: rgba(40, 60, 52, 0.6);
+}
+
+.card-status.status-playing {
+    color: #7ee8a5;
+    background: rgba(60, 140, 90, 0.25);
+}
+
+.card-status.status-ended {
+    color: rgba(214, 236, 227, 0.5);
+    background: rgba(40, 56, 48, 0.5);
+}
+
+.card-meta {
+    display: flex;
+    align-items: center;
+    gap: 8rpx;
+}
+
+.meta-mode,
+.meta-target {
+    font-size: 22rpx;
+    color: rgba(214, 236, 227, 0.55);
+}
+
+.meta-sep {
+    font-size: 22rpx;
+    color: rgba(214, 236, 227, 0.3);
+}
+
+.card-players {
+    display: flex;
+    gap: 24rpx;
+    padding: 12rpx 0;
+    border-top: 2rpx solid rgba(42, 64, 57, 0.6);
+}
+
+.player-item {
+    display: flex;
+    align-items: center;
+    gap: 12rpx;
+    flex: 1;
+}
+
+.player-avatar {
+    width: 48rpx;
+    height: 48rpx;
+    border-radius: 50%;
+    background: rgba(44, 112, 79, 0.7);
+    border: 2rpx solid rgba(98, 214, 151, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22rpx;
+    font-weight: 600;
+    color: #e7f5f1;
+    flex-shrink: 0;
+}
+
+.player-name {
+    font-size: 24rpx;
+    color: #dff3e9;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.player-score {
+    font-size: 28rpx;
+    font-weight: 700;
+    color: #c6f3da;
+}
+
+.card-footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.card-time {
+    font-size: 20rpx;
+    color: rgba(214, 236, 227, 0.4);
+}

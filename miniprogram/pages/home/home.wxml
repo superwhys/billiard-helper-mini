@@ -1,0 +1,64 @@
+<!--pages/home/home.wxml-->
+<view class="page">
+    <scroll-view class="scroll-area" scroll-y enhanced show-scrollbar="{{false}}">
+        <!-- 状态栏占位 -->
+        <view style="height: {{statusBarHeight}}px;"></view>
+
+        <!-- 顶部问候 -->
+        <view class="header">
+            <view class="greeting">
+                <text class="greeting-text">{{greeting}}</text>
+                <text class="user-name">{{userName}}</text>
+            </view>
+            <view class="avatar">{{avatarText}}</view>
+        </view>
+
+        <!-- 选择玩法 -->
+        <view class="section">
+            <text class="section-title">选择玩法</text>
+            <view class="game-grid">
+                <view
+                    wx:for="{{gameModes}}"
+                    wx:key="id"
+                    class="game-card {{item.id === activeModeId ? 'is-active' : ''}} {{!item.isEnabled ? 'is-disabled' : ''}}"
+                    data-mode-id="{{item.id}}"
+                    bindtap="handleSelectMode"
+                >
+                    <view class="game-badge">{{item.badge}}</view>
+                    <view class="game-info">
+                        <text class="game-title">{{item.title}}</text>
+                        <text class="game-desc">{{item.desc}}</text>
+                    </view>
+                </view>
+            </view>
+        </view>
+
+        <!-- 创建对局按钮 -->
+        <view class="primary-button" bindtap="handleCreateRoom">+ 创建对局</view>
+
+        <!-- 最近比赛 -->
+        <view class="section recent">
+            <view class="section-head">
+                <text class="section-title">最近比赛</text>
+                <text class="section-link" bindtap="handleGoRecords">查看全部</text>
+            </view>
+            <view wx:if="{{!hasRecentRecords}}" class="empty-state">暂无记录</view>
+            <view wx:else class="record-list">
+                <record-card
+                    wx:for="{{recentRecords}}"
+                    wx:key="id"
+                    record-id="{{item.id}}"
+                    title="{{item.title}}"
+                    mode="{{item.mode}}"
+                    time="{{item.time}}"
+                    target="{{item.target}}"
+                    players="{{item.players}}"
+                    status="{{item.status}}"
+                />
+            </view>
+        </view>
+
+        <!-- 底部留白（为 TabBar 腾出空间） -->
+        <view class="bottom-spacer"></view>
+    </scroll-view>
+</view>

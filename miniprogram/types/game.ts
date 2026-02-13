@@ -1,0 +1,107 @@
+/** 游戏模式 ID */
+export type GameModeId = 'nine-ball' | 'eight-ball' | 'snooker' | 'more'
+
+/** 对局类型（后端字段） */
+export type MatchType = 'snooker' | '8ball' | '9ball'
+
+/** 玩家类型: 1=虚拟玩家, 2=在线玩家 */
+export type PlayerType = 1 | 2
+
+/** 游戏模式 */
+export interface GameMode {
+    id: GameModeId
+    title: string
+    desc: string
+    badge: string
+    maxPlayers: number
+    isEnabled: boolean
+}
+
+/** 玩家 */
+export interface Player {
+    code?: string
+    id?: number
+    join_time?: string
+    nick_name?: string
+    type?: PlayerType
+    user_id?: number
+}
+
+/** 对局配置 */
+export interface MatchConfig {
+    max_players: number
+    target_score: number
+    data?: Record<string, unknown>
+}
+
+/** 对局 */
+export interface Match {
+    match_type: MatchType
+    match_round: number
+    config: MatchConfig
+    created_at: string
+    id: number
+    name: string
+    owner_id: number
+    players: Player[]
+    status: number
+    current_scores?: Record<string, unknown>
+}
+
+/** 对局列表请求参数 */
+export interface MatchListRequest {
+    cursor?: number
+    limit?: number
+    match_type?: MatchType
+}
+
+/** 删除对局请求 */
+export interface DeleteMatchRequest {
+    match_id: number
+}
+
+// ===== 游戏模式常量 =====
+
+export const NineBallGame: GameMode = {
+    id: 'nine-ball', title: '九球', desc: '追分赛', badge: '9', maxPlayers: 4, isEnabled: true,
+}
+
+export const EightBallGame: GameMode = {
+    id: 'eight-ball', title: '中八', desc: '标准计分', badge: '8', maxPlayers: 2, isEnabled: false,
+}
+
+export const SnookerGame: GameMode = {
+    id: 'snooker', title: '斯诺克', desc: '147满分制', badge: '●', maxPlayers: 2, isEnabled: false,
+}
+
+export const MoreGame: GameMode = {
+    id: 'more', title: '更多玩法', desc: '敬请期待', badge: '+', maxPlayers: 0, isEnabled: false,
+}
+
+export const GAME_MODES: GameMode[] = [NineBallGame, EightBallGame, SnookerGame, MoreGame]
+
+/** GameModeId -> MatchType 映射 */
+export const GAME_MODE_TO_MATCH_TYPE: Record<GameModeId, MatchType> = {
+    'nine-ball': '9ball',
+    'eight-ball': '8ball',
+    'snooker': 'snooker',
+    'more': '9ball',
+}
+
+/** MatchType -> 中文名称映射 */
+export const MATCH_TYPE_TEXT: Record<MatchType, string> = {
+    'snooker': '斯诺克',
+    '8ball': '八球',
+    '9ball': '九球',
+}
+
+/** 筛选名称 -> MatchType 映射 */
+export const FILTER_TYPE_MAP: Record<string, MatchType | undefined> = {
+    '全部': undefined,
+    '斯诺克': 'snooker',
+    '九球': '9ball',
+    '八球': '8ball',
+}
+
+/** 筛选标签 */
+export const RECORD_FILTERS: string[] = ['全部', '斯诺克', '九球', '八球']

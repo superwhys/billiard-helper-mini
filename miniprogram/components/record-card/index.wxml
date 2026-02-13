@@ -1,0 +1,24 @@
+<!--components/record-card/index.wxml-->
+<view class="record-card" bindtap="onTap">
+    <view class="card-header">
+        <view class="card-title-row">
+            <text class="card-title">{{title}}</text>
+            <view class="card-status {{statusClass}}">{{statusText}}</view>
+        </view>
+        <view class="card-meta">
+            <text class="meta-mode">{{mode}}</text>
+            <text class="meta-sep">·</text>
+            <text class="meta-target">{{target}}</text>
+        </view>
+    </view>
+    <view class="card-players">
+        <view class="player-item" wx:for="{{players}}" wx:key="id">
+            <view class="player-avatar">{{item.name[0] || '?'}}</view>
+            <text class="player-name">{{item.name}}</text>
+            <text class="player-score">{{item.score}}</text>
+        </view>
+    </view>
+    <view class="card-footer">
+        <text class="card-time">{{time}}</text>
+    </view>
+</view>

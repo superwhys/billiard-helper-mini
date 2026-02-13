@@ -1,0 +1,30 @@
+/**app.wxss**/
+
+page {
+    height: 100%;
+    overflow-x: hidden;
+    background: linear-gradient(180deg, #0c1e17 0%, #0a1a14 50%, #081410 100%);
+    color: #e7f5f1;
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC',
+        'Microsoft YaHei', sans-serif;
+    font-size: 28rpx;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* 全局盒模型 */
+view, scroll-view, text, input, button, image, navigator {
+    box-sizing: border-box;
+}
+
+/* 安全区域适配 */
+.safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* 隐藏滚动条 */
+::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+}

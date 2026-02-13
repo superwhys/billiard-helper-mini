@@ -1,0 +1,150 @@
+/* pages/records/records.wxss */
+.page {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: linear-gradient(180deg, #0c1e17 0%, #0a1a14 50%, #081410 100%);
+    padding: 0 36rpx;
+}
+
+/* 页面标题 */
+.page-header {
+    padding: 32rpx 0 24rpx;
+}
+
+.header-title-box {
+    padding: 24rpx 0;
+    border-radius: 999rpx;
+    border: 2rpx solid rgba(72, 108, 94, 0.45);
+    text-align: center;
+}
+
+.header-title {
+    font-size: 32rpx;
+    font-weight: 600;
+    color: #e6f5ef;
+}
+
+/* 筛选标签 */
+.filter-tabs {
+    display: flex;
+    gap: 20rpx;
+    flex-wrap: wrap;
+    padding-bottom: 24rpx;
+}
+
+.filter-chip {
+    padding: 14rpx 28rpx;
+    border-radius: 999rpx;
+    background: transparent;
+    color: rgba(214, 236, 227, 0.7);
+    font-size: 26rpx;
+    border: 2rpx solid transparent;
+}
+
+.filter-chip.is-active {
+    color: #e7f7ef;
+    font-weight: 600;
+    background: rgba(76, 160, 120, 0.18);
+    border-color: rgba(106, 214, 151, 0.6);
+}
+
+/* 记录列表 */
+.records-scroll {
+    flex: 1;
+    min-height: 0;
+}
+
+.records-empty {
+    padding-top: 40vh;
+    text-align: center;
+    color: rgba(218, 239, 231, 0.55);
+    font-size: 26rpx;
+}
+
+.records-list {
+    display: flex;
+    flex-direction: column;
+    gap: 24rpx;
+}
+
+.records-loading,
+.records-done {
+    text-align: center;
+    font-size: 24rpx;
+    color: rgba(214, 236, 227, 0.5);
+    padding: 24rpx 0;
+}
+
+/* 删除确认弹窗 */
+.modal-mask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(8, 16, 14, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48rpx;
+    z-index: 200;
+}
+
+.modal-card {
+    width: 100%;
+    max-width: 600rpx;
+    padding: 40rpx;
+    border-radius: 40rpx;
+    background: rgba(16, 29, 26, 0.98);
+    border: 2rpx solid rgba(76, 130, 105, 0.6);
+    box-shadow: 0 32rpx 64rpx rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    gap: 24rpx;
+}
+
+.modal-title {
+    font-size: 32rpx;
+    font-weight: 600;
+    color: #e6f5ef;
+}
+
+.modal-desc {
+    font-size: 26rpx;
+    line-height: 1.6;
+    color: rgba(214, 236, 227, 0.75);
+}
+
+.modal-actions {
+    display: flex;
+    gap: 20rpx;
+    margin-top: 12rpx;
+}
+
+.modal-button {
+    flex: 1;
+    padding: 20rpx 0;
+    text-align: center;
+    border-radius: 999rpx;
+    font-size: 26rpx;
+    font-weight: 600;
+}
+
+.modal-button.ghost {
+    background: rgba(24, 44, 37, 0.9);
+    color: #dff3e9;
+    border: 2rpx solid rgba(90, 140, 117, 0.6);
+}
+
+.modal-button.primary {
+    background: linear-gradient(135deg, #62d18b, #4cc777);
+    color: #0d281b;
+}
+
+/* 底部留白 */
+.bottom-spacer {
+    height: 180rpx;
+}

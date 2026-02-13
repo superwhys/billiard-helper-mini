@@ -1,0 +1,187 @@
+/* pages/home/home.wxss */
+.page {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: linear-gradient(180deg, #0c1e17 0%, #0a1a14 50%, #081410 100%);
+}
+
+.scroll-area {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    padding: 0 36rpx;
+}
+
+/* 顶部问候 */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 32rpx 0 24rpx;
+}
+
+.greeting {
+    display: flex;
+    flex-direction: column;
+    gap: 8rpx;
+    color: #e7f5f1;
+}
+
+.greeting-text {
+    font-size: 26rpx;
+    color: rgba(231, 245, 241, 0.7);
+}
+
+.user-name {
+    font-size: 44rpx;
+    font-weight: 700;
+}
+
+.avatar {
+    width: 80rpx;
+    height: 80rpx;
+    border-radius: 50%;
+    background: rgba(28, 58, 48, 0.9);
+    border: 2rpx solid rgba(76, 130, 105, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 30rpx;
+    color: #c6f3da;
+}
+
+/* 段落 */
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: 24rpx;
+    margin-top: 32rpx;
+}
+
+.section-title {
+    font-size: 32rpx;
+    font-weight: 600;
+    color: #dff3e9;
+}
+
+/* 游戏模式网格 */
+.game-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24rpx;
+}
+
+.game-card {
+    padding: 28rpx;
+    border-radius: 36rpx;
+    background: rgba(20, 34, 30, 0.9);
+    border: 2rpx solid rgba(74, 106, 93, 0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 28rpx;
+    min-height: 220rpx;
+    box-shadow: inset 0 0 0 2rpx rgba(12, 22, 19, 0.6);
+    transition: transform 180ms ease, border-color 180ms ease;
+}
+
+.game-card.is-disabled {
+    opacity: 0.55;
+}
+
+.game-card.is-active {
+    border-color: rgba(78, 185, 121, 0.8);
+    box-shadow: 0 16rpx 40rpx rgba(29, 87, 58, 0.35);
+}
+
+.game-card:active {
+    transform: scale(0.98);
+}
+
+.game-badge {
+    width: 60rpx;
+    height: 60rpx;
+    border-radius: 20rpx;
+    background: rgba(28, 58, 48, 0.85);
+    border: 2rpx solid rgba(74, 130, 105, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 26rpx;
+    color: #e8f7f0;
+}
+
+.game-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8rpx;
+}
+
+.game-title {
+    font-size: 30rpx;
+    font-weight: 600;
+    color: #e6f5ef;
+}
+
+.game-desc {
+    font-size: 22rpx;
+    color: rgba(218, 239, 231, 0.55);
+}
+
+/* 创建对局按钮 */
+.primary-button {
+    width: 100%;
+    padding: 28rpx 0;
+    border-radius: 999rpx;
+    background: linear-gradient(135deg, #62d18b, #4cc777);
+    color: #0d281b;
+    font-size: 30rpx;
+    font-weight: 600;
+    letter-spacing: 1rpx;
+    text-align: center;
+    box-shadow: 0 16rpx 40rpx rgba(44, 155, 99, 0.35);
+    margin-top: 32rpx;
+}
+
+.primary-button:active {
+    opacity: 0.85;
+    transform: scale(0.98);
+}
+
+/* 最近比赛 */
+.recent {
+    margin-top: 36rpx;
+}
+
+.section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.section-link {
+    font-size: 24rpx;
+    color: rgba(106, 214, 151, 0.9);
+}
+
+.empty-state {
+    padding: 64rpx 0;
+    text-align: center;
+    color: rgba(218, 239, 231, 0.5);
+    font-size: 26rpx;
+}
+
+.record-list {
+    display: flex;
+    flex-direction: column;
+    gap: 24rpx;
+}
+
+/* 底部留白 */
+.bottom-spacer {
+    height: 180rpx;
+}

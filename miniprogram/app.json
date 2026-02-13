@@ -1,0 +1,40 @@
+{
+    "pages": [
+        "pages/home/home",
+        "pages/records/records",
+        "pages/profile/profile"
+    ],
+    "window": {
+        "backgroundTextStyle": "dark",
+        "navigationBarBackgroundColor": "#0c1e17",
+        "navigationBarTitleText": "台球计分助手",
+        "navigationBarTextStyle": "white",
+        "backgroundColor": "#081410"
+    },
+    "tabBar": {
+        "color": "#8fa99e",
+        "selectedColor": "#6ad697",
+        "backgroundColor": "#0e1c16",
+        "borderStyle": "black",
+        "list": [
+            {
+                "pagePath": "pages/home/home",
+                "text": "首页",
+                "iconPath": "assets/icons/home.png",
+                "selectedIconPath": "assets/icons/home-active.png"
+            },
+            {
+                "pagePath": "pages/records/records",
+                "text": "对局记录",
+                "iconPath": "assets/icons/records.png",
+                "selectedIconPath": "assets/icons/records-active.png"
+            },
+            {
+                "pagePath": "pages/profile/profile",
+                "text": "我的",
+                "iconPath": "assets/icons/profile.png",
+                "selectedIconPath": "assets/icons/profile-active.png"
+            }
+        ]
+    }
+}

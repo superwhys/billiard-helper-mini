@@ -1,0 +1,69 @@
+<!--pages/records/records.wxml-->
+<view class="page">
+    <!-- 状态栏占位 -->
+    <view style="width:100%; height: {{statusBarHeight}}px; flex-shrink: 0;"></view>
+
+    <!-- 标题 -->
+    <view class="page-header">
+        <view class="header-title-box">
+            <text class="header-title">对局记录</text>
+        </view>
+    </view>
+
+    <!-- 筛选标签 -->
+    <view class="filter-tabs">
+        <view
+            wx:for="{{filters}}"
+            wx:key="*this"
+            class="filter-chip {{activeFilterIndex === index ? 'is-active' : ''}}"
+            data-index="{{index}}"
+            bindtap="handleFilterChange"
+        >
+            {{item}}
+        </view>
+    </view>
+
+    <!-- 记录列表 -->
+    <scroll-view
+        class="records-scroll"
+        scroll-y
+        enhanced
+        show-scrollbar="{{false}}"
+        bindscrolltolower="handleScrollToLower"
+    >
+        <view wx:if="{{!hasRecords && !isLoading}}" class="records-empty">暂无记录</view>
+        <view wx:else class="records-list">
+            <view
+                wx:for="{{recordList}}"
+                wx:key="id"
+                data-record-id="{{item.id}}"
+                bindlongpress="handleLongPress"
+            >
+                <record-card
+                    record-id="{{item.id}}"
+                    title="{{item.title}}"
+                    mode="{{item.mode}}"
+                    time="{{item.time}}"
+                    target="{{item.target}}"
+                    players="{{item.players}}"
+                    status="{{item.status}}"
+                />
+            </view>
+            <view wx:if="{{isLoading}}" class="records-loading">加载中...</view>
+            <view wx:elif="{{!hasMore && hasRecords}}" class="records-done">已到底</view>
+        </view>
+        <view class="bottom-spacer"></view>
+    </scroll-view>
+
+    <!-- 删除确认弹窗 -->
+    <view wx:if="{{showDeleteModal}}" class="modal-mask" bindtap="handleCloseDelete">
+        <view class="modal-card" catchtap="">
+            <text class="modal-title">删除记录</text>
+            <text class="modal-desc">确定要删除这场比赛记录吗？删除后无法恢复。</text>
+            <view class="modal-actions">
+                <view class="modal-button ghost" bindtap="handleCloseDelete">取消</view>
+                <view class="modal-button primary" bindtap="handleConfirmDelete">确认删除</view>
+            </view>
+        </view>
+    </view>
+</view>
