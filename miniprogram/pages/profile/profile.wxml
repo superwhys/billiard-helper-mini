@@ -1,16 +1,6 @@
 <!--pages/profile/profile.wxml-->
 <view class="page">
     <scroll-view class="scroll-area" scroll-y enhanced show-scrollbar="{{false}}">
-        <!-- 状态栏占位 -->
-        <view style="width:100%; height: {{statusBarHeight}}px;"></view>
-
-        <!-- 标题 -->
-        <view class="page-header">
-            <view class="header-title-box">
-                <text class="header-title">我的</text>
-            </view>
-        </view>
-
         <!-- 用户信息卡片 -->
         <view class="profile-card">
             <view class="profile-info">

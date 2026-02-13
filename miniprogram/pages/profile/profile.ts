@@ -4,7 +4,6 @@ import { userStore } from '../../stores/user'
 
 Component({
     data: {
-        statusBarHeight: 0,
         displayName: '游客',
         avatarLetter: '?',
         settings: [
@@ -15,13 +14,6 @@ Component({
         draftName: '',
         isSaving: false,
         isLoggingOut: false,
-    },
-
-    lifetimes: {
-        attached() {
-            const app = getApp<IAppOption>()
-            this.setData({ statusBarHeight: app.globalData.navBarHeight })
-        },
     },
 
     pageLifetimes: {

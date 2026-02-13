@@ -2,5 +2,5 @@
     "usingComponents": {
         "record-card": "../../components/record-card/index"
     },
-    "navigationStyle": "custom"
+    "navigationBarTitleText": "对局记录"
 }

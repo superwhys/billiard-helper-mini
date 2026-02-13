@@ -11,25 +11,7 @@
 .scroll-area {
     flex: 1;
     height: 100%;
-    padding: 0 36rpx;
-}
-
-/* 页面标题 */
-.page-header {
-    padding: 32rpx 0 24rpx;
-}
-
-.header-title-box {
-    padding: 24rpx 0;
-    border-radius: 999rpx;
-    border: 2rpx solid rgba(72, 108, 94, 0.45);
-    text-align: center;
-}
-
-.header-title {
-    font-size: 32rpx;
-    font-weight: 600;
-    color: #e6f5ef;
+    padding: 20rpx 36rpx 0;
 }
 
 /* 用户信息卡片 */

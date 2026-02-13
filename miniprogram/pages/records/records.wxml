@@ -1,15 +1,5 @@
 <!--pages/records/records.wxml-->
 <view class="page">
-    <!-- 状态栏占位 -->
-    <view style="width:100%; height: {{statusBarHeight}}px; flex-shrink: 0;"></view>
-
-    <!-- 标题 -->
-    <view class="page-header">
-        <view class="header-title-box">
-            <text class="header-title">对局记录</text>
-        </view>
-    </view>
-
     <!-- 筛选标签 -->
     <view class="filter-tabs">
         <view
