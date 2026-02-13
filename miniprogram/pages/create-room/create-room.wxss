@@ -1,0 +1,429 @@
+/* pages/create-room/create-room.wxss */
+
+.page {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+.scroll-area {
+    flex: 1;
+    height: 100%;
+    padding: 0 40rpx;
+}
+
+/* ===== 通用区块 ===== */
+
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: 24rpx;
+    margin-bottom: 40rpx;
+    margin-top: 20rpx;
+}
+
+.section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.section-title {
+    font-size: 36rpx;
+    font-weight: 600;
+    color: #dff3e9;
+}
+
+/* ===== 模式卡片 ===== */
+
+.mode-card {
+    padding: 32rpx;
+    border-radius: 40rpx;
+    background: rgba(21, 36, 32, 0.95);
+    border: 2rpx solid rgba(72, 112, 96, 0.6);
+    display: flex;
+    align-items: center;
+    gap: 24rpx;
+    box-shadow: 0 24rpx 48rpx rgba(0, 0, 0, 0.3);
+}
+
+.mode-badge {
+    width: 88rpx;
+    height: 88rpx;
+    border-radius: 32rpx;
+    background: rgba(34, 64, 54, 0.9);
+    border: 2rpx solid rgba(86, 150, 118, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 36rpx;
+    color: #e8f7f0;
+    flex-shrink: 0;
+}
+
+.mode-info {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16rpx;
+}
+
+.mode-title {
+    font-size: 30rpx;
+    font-weight: 600;
+    color: #e6f5ef;
+}
+
+.mode-desc {
+    font-size: 24rpx;
+    color: rgba(214, 236, 227, 0.6);
+}
+
+.mode-meta {
+    font-size: 22rpx;
+    color: rgba(214, 236, 227, 0.45);
+}
+
+/* ===== 房间 ID ===== */
+
+.room-id-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24rpx;
+    padding: 20rpx 28rpx;
+    border-radius: 32rpx;
+    border: 2rpx solid rgba(70, 108, 94, 0.5);
+    background: rgba(18, 31, 28, 0.85);
+    margin-bottom: 40rpx;
+}
+
+.room-id-label {
+    font-size: 24rpx;
+    font-weight: 600;
+    color: rgba(214, 236, 227, 0.6);
+}
+
+.room-id-value {
+    font-size: 26rpx;
+    font-weight: 600;
+    color: #e6f5ef;
+    letter-spacing: 1rpx;
+}
+
+/* ===== 表单区块 ===== */
+
+.form-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20rpx;
+    padding: 12rpx 0;
+    margin-bottom: 20rpx;
+}
+
+.field-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24rpx;
+}
+
+.field-label {
+    font-size: 26rpx;
+    font-weight: 600;
+    color: rgba(221, 239, 231, 0.7);
+}
+
+.field-hint {
+    font-size: 22rpx;
+    color: rgba(221, 239, 231, 0.45);
+}
+
+.text-input {
+    width: 100%;
+    padding: 24rpx 32rpx;
+    border-radius: 32rpx;
+    border: 2rpx solid rgba(70, 108, 94, 0.6);
+    background: rgba(15, 28, 25, 0.95);
+    color: #e6f5ef;
+    font-size: 28rpx;
+}
+
+/* ===== 目标局数 Chip ===== */
+
+.chip-group {
+    display: flex;
+    gap: 24rpx;
+    flex-wrap: wrap;
+}
+
+.chip {
+    min-width: 88rpx;
+    padding: 16rpx 32rpx;
+    border-radius: 999rpx;
+    border: 2rpx solid rgba(70, 108, 94, 0.6);
+    background: rgba(18, 31, 28, 0.9);
+    color: rgba(214, 236, 227, 0.7);
+    font-size: 26rpx;
+    text-align: center;
+}
+
+.chip.is-active {
+    background: rgba(65, 137, 102, 0.45);
+    border-color: rgba(98, 214, 151, 0.7);
+    color: #e6f5ef;
+}
+
+.custom-chip {
+    display: flex;
+    align-items: center;
+    gap: 16rpx;
+    padding: 12rpx 24rpx;
+}
+
+.custom-chip-label {
+    font-size: 26rpx;
+    color: rgba(214, 236, 227, 0.7);
+}
+
+.chip-input {
+    width: 100rpx;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #e6f5ef;
+    font-size: 26rpx;
+    text-align: center;
+}
+
+/* ===== 分数配置行 ===== */
+
+.config-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 28rpx 0;
+    border-bottom: 2rpx solid rgba(70, 108, 94, 0.2);
+}
+
+.config-arrow {
+    font-size: 28rpx;
+    color: rgba(214, 236, 227, 0.4);
+}
+
+/* ===== 球员区块 ===== */
+
+.player-section {
+    display: flex;
+    flex-direction: column;
+    gap: 24rpx;
+    margin-bottom: 20rpx;
+}
+
+.add-link {
+    padding: 12rpx 24rpx;
+    border-radius: 999rpx;
+    color: rgba(106, 214, 151, 0.9);
+    font-size: 24rpx;
+    font-weight: 600;
+}
+
+.add-link.is-disabled {
+    color: rgba(106, 214, 151, 0.35);
+}
+
+.player-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20rpx;
+}
+
+.player-row {
+    display: flex;
+    align-items: center;
+    gap: 16rpx;
+}
+
+.player-card {
+    flex: 1;
+    padding: 24rpx 28rpx;
+    border-radius: 36rpx;
+    border: 2rpx solid rgba(62, 98, 86, 0.6);
+    background: rgba(16, 29, 26, 0.95);
+    display: flex;
+    align-items: center;
+    gap: 24rpx;
+}
+
+.player-avatar {
+    width: 68rpx;
+    height: 68rpx;
+    border-radius: 24rpx;
+    background: rgba(39, 76, 63, 0.9);
+    border: 2rpx solid rgba(90, 160, 125, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #dff3e9;
+    font-weight: 600;
+    font-size: 26rpx;
+    flex-shrink: 0;
+}
+
+.player-name {
+    flex: 1;
+    color: #e6f5ef;
+    font-size: 28rpx;
+    font-weight: 600;
+}
+
+.player-edit {
+    padding: 12rpx 24rpx;
+    border-radius: 999rpx;
+    border: 2rpx solid rgba(70, 110, 94, 0.7);
+    background: rgba(26, 46, 40, 0.9);
+    color: #dff3e9;
+    font-size: 24rpx;
+    flex-shrink: 0;
+}
+
+.player-delete {
+    padding: 24rpx 28rpx;
+    border-radius: 32rpx;
+    border: 2rpx solid rgba(173, 102, 102, 0.7);
+    background: rgba(92, 34, 34, 0.9);
+    color: #f9d9d9;
+    font-size: 24rpx;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.limit-hint {
+    font-size: 24rpx;
+    color: rgba(214, 166, 120, 0.8);
+}
+
+/* ===== 操作按钮 ===== */
+
+.action-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 24rpx;
+    padding: 24rpx 0;
+    margin-top: 8rpx;
+}
+
+.primary-button {
+    width: 100%;
+    padding: 28rpx 36rpx;
+    border: none;
+    border-radius: 999rpx;
+    background: linear-gradient(135deg, #62d18b, #4cc777);
+    color: #0d281b;
+    font-size: 30rpx;
+    font-weight: 600;
+    letter-spacing: 1rpx;
+    text-align: center;
+    box-shadow: 0 24rpx 48rpx rgba(44, 155, 99, 0.35);
+}
+
+.danger-button {
+    width: 100%;
+    padding: 26rpx 36rpx;
+    border-radius: 999rpx;
+    border: 2rpx solid rgba(170, 84, 84, 0.7);
+    background: rgba(63, 24, 24, 0.9);
+    color: #f8d7d7;
+    font-size: 26rpx;
+    font-weight: 600;
+    text-align: center;
+}
+
+.danger-button.is-disabled {
+    opacity: 0.6;
+}
+
+.bottom-spacer {
+    height: 80rpx;
+}
+
+/* ===== 弹窗 ===== */
+
+.modal-mask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(8, 16, 14, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48rpx;
+    z-index: 100;
+}
+
+.modal-card {
+    width: 100%;
+    max-width: 640rpx;
+    padding: 48rpx;
+    border-radius: 48rpx;
+    background: rgba(16, 29, 26, 0.98);
+    border: 2rpx solid rgba(76, 130, 105, 0.6);
+    box-shadow: 0 40rpx 80rpx rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    gap: 32rpx;
+}
+
+.modal-title {
+    font-size: 32rpx;
+    font-weight: 600;
+    color: #e6f5ef;
+}
+
+.modal-desc {
+    font-size: 26rpx;
+    line-height: 1.6;
+    color: rgba(214, 236, 227, 0.75);
+}
+
+.modal-input {
+    width: 100%;
+    padding: 24rpx 32rpx;
+    border-radius: 32rpx;
+    border: 2rpx solid rgba(70, 108, 94, 0.6);
+    background: rgba(12, 22, 19, 0.9);
+    color: #e6f5ef;
+    font-size: 28rpx;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 24rpx;
+}
+
+.modal-button {
+    flex: 1;
+    padding: 24rpx 32rpx;
+    border: none;
+    border-radius: 999rpx;
+    background: linear-gradient(135deg, #62d18b, #4cc777);
+    color: #0d281b;
+    font-size: 26rpx;
+    font-weight: 600;
+    text-align: center;
+}
+
+.modal-button.ghost {
+    background: rgba(24, 44, 37, 0.9);
+    color: #dff3e9;
+    border: 2rpx solid rgba(90, 140, 117, 0.6);
+}
+
+.modal-button.is-disabled {
+    opacity: 0.6;
+}

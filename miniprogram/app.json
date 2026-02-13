@@ -2,7 +2,8 @@
     "pages": [
         "pages/home/home",
         "pages/records/records",
-        "pages/profile/profile"
+        "pages/profile/profile",
+        "pages/create-room/create-room"
     ],
     "window": {
         "backgroundTextStyle": "dark",

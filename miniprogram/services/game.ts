@@ -2,7 +2,11 @@
  * 对局服务适配层
  * 当前使用 mock 数据，后续替换为真实 API 调用时只需修改此文件
  */
-import type { Match, MatchListRequest, DeleteMatchRequest, MatchType } from '../types/game'
+import type {
+    Match, MatchListRequest, DeleteMatchRequest,
+    CreateMatchRequest, StartMatchRequest, JoinMatchRequest,
+    LeaveMatchRequest, UpdateMatchRequest,
+} from '../types/game'
 
 // ===== Mock 数据 =====
 
@@ -93,8 +97,70 @@ function getMockDeleteMatch(params: DeleteMatchRequest): Promise<void> {
     return Promise.resolve()
 }
 
+var nextMockId = 100
+
+function getMockCreateMatch(params: CreateMatchRequest): Promise<Match> {
+    var id = nextMockId++
+    var match: Match = {
+        id: id,
+        name: params.name,
+        match_type: params.match_type,
+        match_round: 0,
+        config: { max_players: params.max_players, target_score: params.target_score },
+        created_at: new Date().toISOString(),
+        owner_id: 1,
+        players: (params.virtual_players || []).map(function (p, i) {
+            return { id: i + 1, nick_name: p.nick_name || ('玩家 ' + (i + 1)), type: p.type, code: 'p' + id + '_' + (i + 1) }
+        }),
+        status: 1,
+    }
+    mockMatches.unshift(match)
+    return Promise.resolve(JSON.parse(JSON.stringify(match)))
+}
+
+function getMockStartMatch(params: StartMatchRequest): Promise<Match> {
+    var match = mockMatches.find(function (m) { return m.id === params.match_id })
+    if (!match) return Promise.reject(new Error('对局不存在'))
+    match.status = 2
+    return Promise.resolve(JSON.parse(JSON.stringify(match)))
+}
+
+function getMockJoinMatch(params: JoinMatchRequest): Promise<Match> {
+    var match = mockMatches.find(function (m) { return m.id === params.match_id })
+    if (!match) return Promise.reject(new Error('对局不存在'))
+    var pid = (match.players.length > 0 ? Math.max.apply(null, match.players.map(function (p) { return p.id || 0 })) : 0) + 1
+    match.players.push({
+        id: pid,
+        nick_name: params.nick_name,
+        type: params.player_type,
+        code: 'p' + match.id + '_' + pid,
+    })
+    return Promise.resolve(JSON.parse(JSON.stringify(match)))
+}
+
+function getMockLeaveMatch(params: LeaveMatchRequest): Promise<Match> {
+    var match = mockMatches.find(function (m) { return m.id === params.match_id })
+    if (!match) return Promise.reject(new Error('对局不存在'))
+    match.players = match.players.filter(function (p) { return p.code !== params.player_code })
+    return Promise.resolve(JSON.parse(JSON.stringify(match)))
+}
+
+function getMockUpdateMatch(params: UpdateMatchRequest): Promise<Match> {
+    var match = mockMatches.find(function (m) { return m.id === params.match_id })
+    if (!match) return Promise.reject(new Error('对局不存在'))
+    match.name = params.name
+    match.config.target_score = params.target_score
+    if (params.config_data) { match.config.data = params.config_data }
+    return Promise.resolve(JSON.parse(JSON.stringify(match)))
+}
+
 // ===== 导出当前使用的适配实现 =====
 // TODO: 接入后端后，将下方替换为真实 API 实现
 
 export const getMatchList = getMockMatchList
 export const deleteMatch = getMockDeleteMatch
+export const createMatch = getMockCreateMatch
+export const startMatch = getMockStartMatch
+export const joinMatch = getMockJoinMatch
+export const leaveMatch = getMockLeaveMatch
+export const updateMatch = getMockUpdateMatch

@@ -60,6 +60,41 @@ export interface DeleteMatchRequest {
     match_id: number
 }
 
+/** 创建对局请求 */
+export interface CreateMatchRequest {
+    match_type: MatchType
+    max_players: number
+    name: string
+    target_score: number
+    virtual_players: Player[]
+}
+
+/** 开始对局请求 */
+export interface StartMatchRequest {
+    match_id: number
+}
+
+/** 加入对局请求 */
+export interface JoinMatchRequest {
+    match_id: number
+    nick_name: string
+    player_type: PlayerType
+}
+
+/** 离开对局请求 */
+export interface LeaveMatchRequest {
+    match_id: number
+    player_code: string
+}
+
+/** 更新对局请求 */
+export interface UpdateMatchRequest {
+    match_id: number
+    name: string
+    target_score: number
+    config_data?: Record<string, unknown>
+}
+
 // ===== 游戏模式常量 =====
 
 export const NineBallGame: GameMode = {

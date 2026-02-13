@@ -1,9 +1,10 @@
 /** 首页 */
-import { GAME_MODES, MATCH_TYPE_TEXT } from '../../types/game'
+import { GAME_MODES, GAME_MODE_TO_MATCH_TYPE, MATCH_TYPE_TEXT } from '../../types/game'
 import type { GameModeId, Match } from '../../types/game'
 import { getCurrentUser } from '../../services/account'
-import { getMatchList } from '../../services/game'
+import { getMatchList, createMatch } from '../../services/game'
 import { userStore } from '../../stores/user'
+import { gameStore } from '../../stores/game'
 import { getGreeting, formatMatchTime } from '../../utils/util'
 
 interface RecordPlayer {
@@ -103,9 +104,33 @@ Component({
             this.setData({ activeModeId: modeId })
         },
 
-        /** 创建对局（预留） */
-        handleCreateRoom() {
-            wx.showToast({ title: '功能开发中', icon: 'none' })
+        /** 创建对局 */
+        async handleCreateRoom() {
+            var modeId = this.data.activeModeId
+            var mode = null as typeof GAME_MODES[0] | null
+            for (var i = 0; i < GAME_MODES.length; i++) {
+                if (GAME_MODES[i].id === modeId) { mode = GAME_MODES[i]; break }
+            }
+            if (!mode || !mode.isEnabled) {
+                wx.showToast({ title: '该玩法暂未开放', icon: 'none' })
+                return
+            }
+            var matchType = GAME_MODE_TO_MATCH_TYPE[modeId]
+            var userName = userStore.getName()
+            try {
+                var match = await createMatch({
+                    match_type: matchType,
+                    max_players: mode.maxPlayers,
+                    name: userName + '的对局',
+                    target_score: 5,
+                    virtual_players: [{ nick_name: userName, type: 1 }],
+                })
+                gameStore.setCurrentMatch(match)
+                wx.navigateTo({ url: '/pages/create-room/create-room?matchId=' + match.id })
+            } catch (err) {
+                console.error('创建对局失败', err)
+                wx.showToast({ title: '创建失败', icon: 'none' })
+            }
         },
 
         /** 跳转到对局记录 */
