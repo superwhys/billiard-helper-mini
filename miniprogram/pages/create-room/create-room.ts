@@ -1,6 +1,7 @@
 /** 创建/编辑对局页面 */
 import { GAME_MODES, NineBallGame } from '../../types/game'
 import type { GameModeId, Match } from '../../types/game'
+import { nineBallScoreKeys, nineBallScoreLabels, extractNineBallScores } from '../../types/nineball'
 import { updateMatch, joinMatch, leaveMatch, startMatch, deleteMatch } from '../../services/game'
 import { gameStore } from '../../stores/game'
 
@@ -47,9 +48,12 @@ Component({
         roomName: '',
         targetScore: 5,
         targetOptions: [3, 5, 7, 9],
+        scoreConfigExpanded: false,
+        scoreItems: [] as Array<{ key: string; label: string; value: number }>,
         players: [] as RoomPlayer[],
         canAddPlayer: true,
         canDeletePlayer: false,
+        swipedPlayerId: 0,
         showAddModal: false,
         addingName: '',
         showEditModal: false,
@@ -61,6 +65,38 @@ Component({
     },
 
     methods: {
+        // ===== 滑动手势 =====
+
+        _touchStartX: 0,
+        _touchStartY: 0,
+
+        onPlayerTouchStart(e: WechatMiniprogram.TouchEvent) {
+            this._touchStartX = e.touches[0].clientX
+            this._touchStartY = e.touches[0].clientY
+        },
+
+        onPlayerTouchEnd(e: WechatMiniprogram.TouchEvent) {
+            var endX = e.changedTouches[0].clientX
+            var endY = e.changedTouches[0].clientY
+            var deltaX = endX - this._touchStartX
+            var deltaY = endY - this._touchStartY
+            var playerId = Number(e.currentTarget.dataset.playerId)
+
+            if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 30) {
+                if (deltaX < 0 && this.data.canDeletePlayer) {
+                    this.setData({ swipedPlayerId: playerId })
+                } else {
+                    this.setData({ swipedPlayerId: 0 })
+                }
+            }
+        },
+
+        handleCloseSwipe() {
+            if (this.data.swipedPlayerId) {
+                this.setData({ swipedPlayerId: 0 })
+            }
+        },
+
         onLoad(options: Record<string, string>) {
             var matchId = Number(options.matchId || 0)
             var match = gameStore.getCurrentMatch()
@@ -89,6 +125,17 @@ Component({
                 }
             })
 
+            var isNineBall = modeId === 'nine-ball'
+            var scoreItems: Array<{ key: string; label: string; value: number }> = []
+            if (isNineBall) {
+                var configData = (match.config && match.config.data) ? match.config.data : undefined
+                var scores = extractNineBallScores(configData)
+                for (var j = 0; j < nineBallScoreKeys.length; j++) {
+                    var sk = nineBallScoreKeys[j]
+                    scoreItems.push({ key: sk, label: nineBallScoreLabels[sk], value: scores[sk] })
+                }
+            }
+
             this.setData({
                 matchId: match.id,
                 matchIdText: '#' + match.id,
@@ -97,9 +144,10 @@ Component({
                 modeDesc: mode.desc,
                 modeMaxPlayers: mode.maxPlayers,
                 modeMeta: '最多 ' + mode.maxPlayers + ' 人',
-                isNineBall: modeId === 'nine-ball',
+                isNineBall: isNineBall,
                 roomName: (match.name || '').trim(),
                 targetScore: match.config ? match.config.target_score : 5,
+                scoreItems: scoreItems,
                 players: playerList,
                 canAddPlayer: playerList.length < mode.maxPlayers,
                 canDeletePlayer: playerList.length > 1,
@@ -134,6 +182,30 @@ Component({
             this.updateMatchIfChanged()
         },
 
+        // ===== 分数配置 =====
+
+        handleToggleScoreConfig() {
+            this.setData({ scoreConfigExpanded: !this.data.scoreConfigExpanded })
+        },
+
+        handleScoreInput(e: WechatMiniprogram.Input) {
+            var key = String(e.currentTarget.dataset.key || '')
+            var value = Number(e.detail.value)
+            if (!key) { return }
+            var items = this.data.scoreItems.slice()
+            for (var i = 0; i < items.length; i++) {
+                if (items[i].key === key) {
+                    items[i] = { key: items[i].key, label: items[i].label, value: isFinite(value) ? value : 0 }
+                    break
+                }
+            }
+            this.setData({ scoreItems: items })
+        },
+
+        handleScoreBlur() {
+            this.updateMatchIfChanged()
+        },
+
         // ===== 更新对局 =====
 
         async updateMatchIfChanged() {
@@ -142,8 +214,16 @@ Component({
             var name = this.data.roomName.trim()
             var target = this.data.targetScore
             if (!name || target <= 0) { return }
+            var configData: Record<string, unknown> | undefined
+            if (this.data.isNineBall && this.data.scoreItems.length > 0) {
+                configData = {}
+                for (var i = 0; i < this.data.scoreItems.length; i++) {
+                    var item = this.data.scoreItems[i]
+                    configData[item.key] = item.value
+                }
+            }
             try {
-                var match = await updateMatch({ match_id: matchId, name: name, target_score: target })
+                var match = await updateMatch({ match_id: matchId, name: name, target_score: target, config_data: configData })
                 gameStore.setCurrentMatch(match)
             } catch (err) {
                 console.error('更新对局失败', err)
@@ -234,6 +314,7 @@ Component({
             }
             if (!player) { return }
 
+            this.setData({ swipedPlayerId: 0 })
             var matchId = this.data.matchId
             if (matchId && player.player_code) {
                 try {

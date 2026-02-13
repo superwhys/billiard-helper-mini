@@ -1,6 +1,6 @@
 <!--pages/create-room/create-room.wxml-->
 <view class="page">
-    <scroll-view class="scroll-area" scroll-y enhanced show-scrollbar="{{false}}">
+    <scroll-view class="scroll-area" scroll-y enhanced show-scrollbar="{{false}}" bindscroll="handleCloseSwipe">
 
         <!-- 当前玩法 -->
         <view class="section">
@@ -64,9 +64,24 @@
         </view>
 
         <!-- 分数配置（九球专用） -->
-        <view wx:if="{{isNineBall}}" class="form-section config-row" bindtap="">
-            <text class="field-label">分数配置</text>
-            <text class="config-arrow">></text>
+        <view wx:if="{{isNineBall}}" class="score-config-section">
+            <view class="score-config-trigger" bindtap="handleToggleScoreConfig">
+                <text class="field-label">分数配置</text>
+                <text class="score-config-chevron {{scoreConfigExpanded ? 'is-expanded' : ''}}">›</text>
+            </view>
+            <view wx:if="{{scoreConfigExpanded}}" class="score-config-list">
+                <view class="score-config-row" wx:for="{{scoreItems}}" wx:key="key">
+                    <text class="score-config-label">{{item.label}}</text>
+                    <input
+                        class="score-config-input"
+                        type="number"
+                        value="{{item.value}}"
+                        data-key="{{item.key}}"
+                        bindinput="handleScoreInput"
+                        bindblur="handleScoreBlur"
+                    />
+                </view>
+            </view>
         </view>
 
         <!-- 球员列表 -->
@@ -76,23 +91,31 @@
                 <view class="add-link {{!canAddPlayer ? 'is-disabled' : ''}}" bindtap="handleOpenAdd">+ 添加</view>
             </view>
             <view class="player-list">
-                <view class="player-row" wx:for="{{players}}" wx:key="id">
-                    <view class="player-card">
-                        <view class="player-avatar">玩</view>
-                        <text class="player-name">{{item.nick_name}}</text>
+                <view
+                    class="player-swipe"
+                    wx:for="{{players}}"
+                    wx:key="id"
+                    data-player-id="{{item.id}}"
+                    bindtouchstart="onPlayerTouchStart"
+                    bindtouchend="onPlayerTouchEnd"
+                >
+                    <view class="player-slide {{swipedPlayerId === item.id ? 'is-swiped' : ''}}">
+                        <view class="player-card">
+                            <view class="player-avatar">玩</view>
+                            <text class="player-name">{{item.nick_name}}</text>
+                            <view
+                                class="player-edit"
+                                data-player-id="{{item.id}}"
+                                data-player-name="{{item.nick_name}}"
+                                catchtap="handleOpenEdit"
+                            >编辑</view>
+                        </view>
                         <view
-                            class="player-edit"
+                            class="player-delete"
                             data-player-id="{{item.id}}"
-                            data-player-name="{{item.nick_name}}"
-                            catchtap="handleOpenEdit"
-                        >编辑</view>
+                            catchtap="handleDeletePlayer"
+                        >删除</view>
                     </view>
-                    <view
-                        wx:if="{{canDeletePlayer}}"
-                        class="player-delete"
-                        data-player-id="{{item.id}}"
-                        catchtap="handleDeletePlayer"
-                    >删除</view>
                 </view>
             </view>
             <text wx:if="{{!canAddPlayer}}" class="limit-hint">已达到当前玩法的最大人数</text>

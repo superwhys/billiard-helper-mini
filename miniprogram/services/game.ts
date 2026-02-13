@@ -7,6 +7,7 @@ import type {
     CreateMatchRequest, StartMatchRequest, JoinMatchRequest,
     LeaveMatchRequest, UpdateMatchRequest,
 } from '../types/game'
+import { defaultNineBallScores } from '../types/nineball'
 
 // ===== Mock 数据 =====
 
@@ -101,12 +102,15 @@ var nextMockId = 100
 
 function getMockCreateMatch(params: CreateMatchRequest): Promise<Match> {
     var id = nextMockId++
+    var configData = params.match_type === '9ball'
+        ? { big: defaultNineBallScores.big, small: defaultNineBallScores.small, golden: defaultNineBallScores.golden, win: defaultNineBallScores.win, foul: defaultNineBallScores.foul }
+        : undefined
     var match: Match = {
         id: id,
         name: params.name,
         match_type: params.match_type,
         match_round: 0,
-        config: { max_players: params.max_players, target_score: params.target_score },
+        config: { max_players: params.max_players, target_score: params.target_score, data: configData },
         created_at: new Date().toISOString(),
         owner_id: 1,
         players: (params.virtual_players || []).map(function (p, i) {
