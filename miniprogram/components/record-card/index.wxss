@@ -1,118 +1,159 @@
 /* components/record-card/index.wxss */
+
 .record-card {
     padding: 28rpx;
-    border-radius: 28rpx;
-    background: rgba(19, 33, 29, 0.92);
-    border: 2rpx solid rgba(72, 108, 94, 0.5);
+    border-radius: 36rpx;
+    background: rgba(18, 31, 28, 0.92);
+    border: 2rpx solid rgba(72, 110, 96, 0.6);
     display: flex;
     flex-direction: column;
-    gap: 20rpx;
-    box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.15);
+    gap: 24rpx;
+    box-shadow: 0 20rpx 44rpx rgba(6, 16, 13, 0.45);
 }
 
-.card-header {
+/* 头部 */
+.record-head {
     display: flex;
-    flex-direction: column;
-    gap: 8rpx;
-}
-
-.card-title-row {
-    display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
+    gap: 20rpx;
 }
 
-.card-title {
-    font-size: 28rpx;
+.record-title {
+    display: flex;
+    flex-direction: column;
+    gap: 10rpx;
+    flex: 1;
+    min-width: 0;
+}
+
+.record-name {
+    font-size: 30rpx;
     font-weight: 600;
     color: #e6f5ef;
-}
-
-.card-status {
-    font-size: 20rpx;
-    padding: 4rpx 16rpx;
-    border-radius: 999rpx;
-    color: rgba(214, 236, 227, 0.7);
-    background: rgba(40, 60, 52, 0.6);
-}
-
-.card-status.status-playing {
-    color: #7ee8a5;
-    background: rgba(60, 140, 90, 0.25);
-}
-
-.card-status.status-ended {
-    color: rgba(214, 236, 227, 0.5);
-    background: rgba(40, 56, 48, 0.5);
-}
-
-.card-meta {
-    display: flex;
-    align-items: center;
-    gap: 8rpx;
-}
-
-.meta-mode,
-.meta-target {
-    font-size: 22rpx;
-    color: rgba(214, 236, 227, 0.55);
-}
-
-.meta-sep {
-    font-size: 22rpx;
-    color: rgba(214, 236, 227, 0.3);
-}
-
-.card-players {
-    display: flex;
-    gap: 24rpx;
-    padding: 12rpx 0;
-    border-top: 2rpx solid rgba(42, 64, 57, 0.6);
-}
-
-.player-item {
-    display: flex;
-    align-items: center;
-    gap: 12rpx;
-    flex: 1;
-}
-
-.player-avatar {
-    width: 48rpx;
-    height: 48rpx;
-    border-radius: 50%;
-    background: rgba(44, 112, 79, 0.7);
-    border: 2rpx solid rgba(98, 214, 151, 0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 22rpx;
-    font-weight: 600;
-    color: #e7f5f1;
-    flex-shrink: 0;
-}
-
-.player-name {
-    font-size: 24rpx;
-    color: #dff3e9;
-    flex: 1;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-.player-score {
-    font-size: 28rpx;
-    font-weight: 700;
-    color: #c6f3da;
-}
-
-.card-footer {
+.record-meta {
     display: flex;
-    justify-content: flex-end;
+    align-items: center;
+    gap: 14rpx;
+    color: rgba(218, 239, 231, 0.65);
+    font-size: 24rpx;
 }
 
-.card-time {
-    font-size: 20rpx;
-    color: rgba(214, 236, 227, 0.4);
+.record-mode {
+    padding: 6rpx 18rpx;
+    border-radius: 999rpx;
+    border: 2rpx solid rgba(72, 120, 102, 0.6);
+    background: rgba(27, 46, 40, 0.85);
+    color: rgba(210, 238, 227, 0.8);
+    font-size: 22rpx;
+    flex-shrink: 0;
+}
+
+.record-dot {
+    width: 8rpx;
+    height: 8rpx;
+    border-radius: 50%;
+    background: rgba(210, 238, 227, 0.4);
+    flex-shrink: 0;
+}
+
+.record-time {
+    font-size: 22rpx;
+    color: rgba(218, 239, 231, 0.65);
+}
+
+.record-status {
+    padding: 8rpx 22rpx;
+    border-radius: 999rpx;
+    border: 2rpx solid rgba(90, 150, 120, 0.55);
+    background: rgba(24, 44, 37, 0.85);
+    color: rgba(210, 238, 227, 0.85);
+    font-size: 22rpx;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* 内容 */
+.record-body {
+    display: flex;
+    flex-direction: column;
+    gap: 16rpx;
+}
+
+.record-target {
+    font-size: 24rpx;
+    color: rgba(218, 239, 231, 0.55);
+}
+
+.record-players {
+    display: flex;
+    flex-direction: column;
+    gap: 14rpx;
+}
+
+/* 胜者行 */
+.winner-row {
+    display: flex;
+    align-items: center;
+    gap: 16rpx;
+    padding: 14rpx 22rpx;
+    border-radius: 24rpx;
+    border: 2rpx solid rgba(94, 170, 132, 0.7);
+    background: rgba(35, 76, 60, 0.6);
+    color: #e9fbf1;
+}
+
+.winner-label {
+    padding: 4rpx 14rpx;
+    border-radius: 999rpx;
+    border: 2rpx solid rgba(112, 208, 152, 0.6);
+    background: rgba(24, 52, 41, 0.8);
+    font-size: 22rpx;
+    color: rgba(210, 238, 227, 0.85);
+    flex-shrink: 0;
+}
+
+.winner-name {
+    flex: 1;
+    font-size: 26rpx;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.winner-score {
+    padding: 4rpx 14rpx;
+    border-radius: 999rpx;
+    border: 2rpx solid rgba(112, 208, 152, 0.6);
+    background: rgba(25, 58, 45, 0.9);
+    font-size: 24rpx;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+/* 球员行 */
+.participants-row {
+    display: flex;
+    align-items: center;
+    gap: 14rpx;
+    font-size: 24rpx;
+    color: rgba(214, 236, 227, 0.7);
+}
+
+.participants-label {
+    flex-shrink: 0;
+    color: rgba(214, 236, 227, 0.55);
+}
+
+.participants-names {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }

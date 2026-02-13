@@ -1,24 +1,41 @@
 <!--components/record-card/index.wxml-->
 <view class="record-card" bindtap="onTap">
-    <view class="card-header">
-        <view class="card-title-row">
-            <text class="card-title">{{title}}</text>
-            <view class="card-status {{statusClass}}">{{statusText}}</view>
+    <!-- 头部：标题 + 状态 -->
+    <view class="record-head">
+        <view class="record-title">
+            <text class="record-name">{{title}}</text>
+            <view class="record-meta">
+                <text class="record-mode">{{mode}}</text>
+                <view class="record-dot"></view>
+                <text class="record-time">{{time}}</text>
+            </view>
         </view>
-        <view class="card-meta">
-            <text class="meta-mode">{{mode}}</text>
-            <text class="meta-sep">·</text>
-            <text class="meta-target">{{target}}</text>
-        </view>
+        <view class="record-status">{{statusText}}</view>
     </view>
-    <view class="card-players">
-        <view class="player-item" wx:for="{{players}}" wx:key="id">
-            <view class="player-avatar">{{item.name[0] || '?'}}</view>
-            <text class="player-name">{{item.name}}</text>
-            <text class="player-score">{{item.score}}</text>
+
+    <!-- 内容：目标 + 球员 -->
+    <view class="record-body">
+        <text class="record-target">目标 {{target}}</text>
+        <view class="record-players">
+            <!-- 已完成：显示胜者 + 其他玩家 -->
+            <block wx:if="{{isFinished}}">
+                <view wx:if="{{winnerPlayer}}" class="winner-row">
+                    <text class="winner-label">胜者</text>
+                    <text class="winner-name">{{winnerPlayer.name}}</text>
+                    <text class="winner-score">{{winnerPlayer.score}}</text>
+                </view>
+                <view class="participants-row">
+                    <text class="participants-label">其他玩家</text>
+                    <text class="participants-names">{{otherNamesText}}</text>
+                </view>
+            </block>
+            <!-- 未完成：显示全部球员 -->
+            <block wx:else>
+                <view class="participants-row">
+                    <text class="participants-label">球员</text>
+                    <text class="participants-names">{{allPlayerNamesText}}</text>
+                </view>
+            </block>
         </view>
-    </view>
-    <view class="card-footer">
-        <text class="card-time">{{time}}</text>
     </view>
 </view>
