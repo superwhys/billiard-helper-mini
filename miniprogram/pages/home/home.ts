@@ -43,7 +43,7 @@ function buildRecordItem(match: Match): RecordItem {
     }
 }
 
-Component({
+Page({
     data: {
         navBarHeight: 0,
         greeting: '',
@@ -55,87 +55,80 @@ Component({
         hasRecentRecords: false,
     },
 
-    lifetimes: {
-        attached() {
-            const app = getApp<IAppOption>()
+    onLoad() {
+        const app = getApp<IAppOption>()
+        this.setData({
+            navBarHeight: app.globalData.navBarHeight,
+        })
+    },
+
+    onShow() {
+        this.loadData()
+    },
+
+    /** 加载页面数据 */
+    async loadData() {
+        try {
+            const results = await Promise.all([
+                getCurrentUser(),
+                getMatchList({ limit: 3 }),
+            ])
+            const profile = results[0]
+            const matches = results[1]
+            userStore.setProfile(profile)
+            const records = matches.map(function (m) { return buildRecordItem(m) })
             this.setData({
-                navBarHeight: app.globalData.navBarHeight,
+                userName: profile.name || '游客',
+                avatarText: (profile.name || '?').slice(0, 1),
+                recentRecords: records,
+                hasRecentRecords: records.length > 0,
                 greeting: getGreeting(),
             })
-        },
+        } catch (err) {
+            console.error('首页数据加载失败', err)
+        }
     },
 
-    pageLifetimes: {
-        show() {
-            this.loadData()
-        },
+    /** 选择游戏模式 */
+    handleSelectMode(e: WechatMiniprogram.TouchEvent) {
+        const modeId = e.currentTarget.dataset.modeId as GameModeId
+        if (!modeId) return
+        const mode = GAME_MODES.find(function (m) { return m.id === modeId })
+        if (!mode || !mode.isEnabled) return
+        this.setData({ activeModeId: modeId })
     },
 
-    methods: {
-        /** 加载页面数据 */
-        async loadData() {
-            try {
-                const results = await Promise.all([
-                    getCurrentUser(),
-                    getMatchList({ limit: 3 }),
-                ])
-                const profile = results[0]
-                const matches = results[1]
-                userStore.setProfile(profile)
-                const records = matches.map(function (m) { return buildRecordItem(m) })
-                this.setData({
-                    userName: profile.name || '游客',
-                    avatarText: (profile.name || '?').slice(0, 1),
-                    recentRecords: records,
-                    hasRecentRecords: records.length > 0,
-                    greeting: getGreeting(),
-                })
-            } catch (err) {
-                console.error('首页数据加载失败', err)
-            }
-        },
+    /** 创建对局 */
+    async handleCreateRoom() {
+        var modeId = this.data.activeModeId
+        var mode = null as typeof GAME_MODES[0] | null
+        for (var i = 0; i < GAME_MODES.length; i++) {
+            if (GAME_MODES[i].id === modeId) { mode = GAME_MODES[i]; break }
+        }
+        if (!mode || !mode.isEnabled) {
+            wx.showToast({ title: '该玩法暂未开放', icon: 'none' })
+            return
+        }
+        var matchType = GAME_MODE_TO_MATCH_TYPE[modeId]
+        var userName = userStore.getName()
+        try {
+            var match = await createMatch({
+                match_type: matchType,
+                max_players: mode.maxPlayers,
+                name: userName + '的对局',
+                target_score: 5,
+                virtual_players: [{ nick_name: userName, type: 1 }],
+            })
+            gameStore.setCurrentMatch(match)
+            wx.navigateTo({ url: '/pages/create-room/create-room?matchId=' + match.id })
+        } catch (err) {
+            console.error('创建对局失败', err)
+            wx.showToast({ title: '创建失败', icon: 'none' })
+        }
+    },
 
-        /** 选择游戏模式 */
-        handleSelectMode(e: WechatMiniprogram.TouchEvent) {
-            const modeId = e.currentTarget.dataset.modeId as GameModeId
-            if (!modeId) return
-            const mode = GAME_MODES.find(function (m) { return m.id === modeId })
-            if (!mode || !mode.isEnabled) return
-            this.setData({ activeModeId: modeId })
-        },
-
-        /** 创建对局 */
-        async handleCreateRoom() {
-            var modeId = this.data.activeModeId
-            var mode = null as typeof GAME_MODES[0] | null
-            for (var i = 0; i < GAME_MODES.length; i++) {
-                if (GAME_MODES[i].id === modeId) { mode = GAME_MODES[i]; break }
-            }
-            if (!mode || !mode.isEnabled) {
-                wx.showToast({ title: '该玩法暂未开放', icon: 'none' })
-                return
-            }
-            var matchType = GAME_MODE_TO_MATCH_TYPE[modeId]
-            var userName = userStore.getName()
-            try {
-                var match = await createMatch({
-                    match_type: matchType,
-                    max_players: mode.maxPlayers,
-                    name: userName + '的对局',
-                    target_score: 5,
-                    virtual_players: [{ nick_name: userName, type: 1 }],
-                })
-                gameStore.setCurrentMatch(match)
-                wx.navigateTo({ url: '/pages/create-room/create-room?matchId=' + match.id })
-            } catch (err) {
-                console.error('创建对局失败', err)
-                wx.showToast({ title: '创建失败', icon: 'none' })
-            }
-        },
-
-        /** 跳转到对局记录 */
-        handleGoRecords() {
-            wx.switchTab({ url: '/pages/records/records' })
-        },
+    /** 跳转到对局记录 */
+    handleGoRecords() {
+        wx.switchTab({ url: '/pages/records/records' })
     },
 })

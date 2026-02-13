@@ -49,7 +49,7 @@ function buildRecordItem(match: Match, fallbackType?: MatchType): RecordItem {
     }
 }
 
-Component({
+Page({
     data: {
         filters: RECORD_FILTERS,
         activeFilterIndex: 0,
@@ -63,100 +63,96 @@ Component({
         isDeleting: false,
     },
 
-    pageLifetimes: {
-        show() {
-            this.loadRecords(true)
-        },
+    onShow() {
+        this.loadRecords(true)
     },
 
-    methods: {
-        /** 加载记录 */
-        async loadRecords(isReset?: boolean) {
-            if (this.data.isLoading) return
+    /** 加载记录 */
+    async loadRecords(isReset?: boolean) {
+        if (this.data.isLoading) return
+        if (isReset) {
+            this.setData({ cursor: null, hasMore: true, recordList: [], hasRecords: false })
+        }
+        if (!this.data.hasMore) return
+
+        const selectedFilter = this.data.filters[this.data.activeFilterIndex] || '全部'
+        const matchType = FILTER_TYPE_MAP[selectedFilter]
+
+        this.setData({ isLoading: true })
+        try {
+            const matches = await getMatchList({
+                match_type: matchType,
+                limit: PAGE_SIZE,
+                cursor: this.data.cursor || undefined,
+            })
+            const nextItems = matches.map(function (m) { return buildRecordItem(m, matchType) })
+            const list = isReset ? nextItems : ([] as RecordItem[]).concat(this.data.recordList, nextItems)
+            const lastMatch = matches[matches.length - 1]
+
+            this.setData({
+                recordList: list,
+                hasRecords: list.length > 0,
+                hasMore: matches.length >= PAGE_SIZE,
+                cursor: lastMatch ? lastMatch.id : this.data.cursor,
+            })
+        } catch (err) {
+            console.error('加载记录失败', err)
             if (isReset) {
-                this.setData({ cursor: null, hasMore: true, recordList: [], hasRecords: false })
+                this.setData({ recordList: [], hasRecords: false })
             }
-            if (!this.data.hasMore) return
+            this.setData({ hasMore: false })
+        } finally {
+            this.setData({ isLoading: false })
+        }
+    },
 
-            const selectedFilter = this.data.filters[this.data.activeFilterIndex] || '全部'
-            const matchType = FILTER_TYPE_MAP[selectedFilter]
+    /** 切换筛选标签 */
+    handleFilterChange(e: WechatMiniprogram.TouchEvent) {
+        const index = e.currentTarget.dataset.index as number
+        if (index === this.data.activeFilterIndex) return
+        this.setData({ activeFilterIndex: index })
+        this.loadRecords(true)
+    },
 
-            this.setData({ isLoading: true })
-            try {
-                const matches = await getMatchList({
-                    match_type: matchType,
-                    limit: PAGE_SIZE,
-                    cursor: this.data.cursor || undefined,
-                })
-                const nextItems = matches.map(function (m) { return buildRecordItem(m, matchType) })
-                const list = isReset ? nextItems : ([] as RecordItem[]).concat(this.data.recordList, nextItems)
-                const lastMatch = matches[matches.length - 1]
+    /** 触底加载更多 */
+    handleScrollToLower() {
+        if (!this.data.isLoading && this.data.hasMore) {
+            this.loadRecords()
+        }
+    },
 
-                this.setData({
-                    recordList: list,
-                    hasRecords: list.length > 0,
-                    hasMore: matches.length >= PAGE_SIZE,
-                    cursor: lastMatch ? lastMatch.id : this.data.cursor,
-                })
-            } catch (err) {
-                console.error('加载记录失败', err)
-                if (isReset) {
-                    this.setData({ recordList: [], hasRecords: false })
-                }
-                this.setData({ hasMore: false })
-            } finally {
-                this.setData({ isLoading: false })
-            }
-        },
+    /** 长按显示删除确认 */
+    handleLongPress(e: WechatMiniprogram.TouchEvent) {
+        const recordId = e.currentTarget.dataset.recordId as number
+        if (!recordId || this.data.isDeleting) return
+        this.setData({ showDeleteModal: true, deletingId: recordId })
+    },
 
-        /** 切换筛选标签 */
-        handleFilterChange(e: WechatMiniprogram.TouchEvent) {
-            const index = e.currentTarget.dataset.index as number
-            if (index === this.data.activeFilterIndex) return
-            this.setData({ activeFilterIndex: index })
-            this.loadRecords(true)
-        },
+    /** 关闭删除弹窗 */
+    handleCloseDelete() {
+        if (this.data.isDeleting) return
+        this.setData({ showDeleteModal: false, deletingId: null })
+    },
 
-        /** 触底加载更多 */
-        handleScrollToLower() {
-            if (!this.data.isLoading && this.data.hasMore) {
-                this.loadRecords()
-            }
-        },
+    /** 确认删除 */
+    async handleConfirmDelete() {
+        const matchId = this.data.deletingId
+        if (!matchId || this.data.isDeleting) return
 
-        /** 长按显示删除确认 */
-        handleLongPress(e: WechatMiniprogram.TouchEvent) {
-            const recordId = e.currentTarget.dataset.recordId as number
-            if (!recordId || this.data.isDeleting) return
-            this.setData({ showDeleteModal: true, deletingId: recordId })
-        },
-
-        /** 关闭删除弹窗 */
-        handleCloseDelete() {
-            if (this.data.isDeleting) return
-            this.setData({ showDeleteModal: false, deletingId: null })
-        },
-
-        /** 确认删除 */
-        async handleConfirmDelete() {
-            const matchId = this.data.deletingId
-            if (!matchId || this.data.isDeleting) return
-
-            this.setData({ isDeleting: true })
-            try {
-                await deleteMatch({ match_id: matchId })
-                const list = this.data.recordList.filter(function (r) { return r.id !== matchId })
-                this.setData({
-                    recordList: list,
-                    hasRecords: list.length > 0,
-                })
-                wx.showToast({ title: '已删除', icon: 'success' })
-            } catch (err) {
-                console.error('删除失败', err)
-                wx.showToast({ title: '删除失败', icon: 'none' })
-            } finally {
-                this.setData({ isDeleting: false, showDeleteModal: false, deletingId: null })
-            }
-        },
+        this.setData({ isDeleting: true })
+        try {
+            await deleteMatch({ match_id: matchId })
+            const list = this.data.recordList.filter(function (r) { return r.id !== matchId })
+            this.setData({
+                recordList: list,
+                hasRecords: list.length > 0,
+            })
+            wx.showToast({ title: '已删除', icon: 'success' })
+        } catch (err) {
+            console.error('删除失败', err)
+            wx.showToast({ title: '删除失败', icon: 'none' })
+        } finally {
+            this.setData({ isDeleting: false, showDeleteModal: false, deletingId: null })
+        }
     },
 })
