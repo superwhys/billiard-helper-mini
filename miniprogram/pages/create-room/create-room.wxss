@@ -455,7 +455,9 @@
 
 .modal-input {
     width: 100%;
-    padding: 24rpx 32rpx;
+    height: 88rpx;
+    padding: 0 32rpx;
+    line-height: 88rpx;
     border-radius: 32rpx;
     border: 2rpx solid rgba(70, 108, 94, 0.6);
     background: rgba(12, 22, 19, 0.9);
