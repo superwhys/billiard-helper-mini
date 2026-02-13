@@ -3,5 +3,6 @@
         "record-card": "../../components/record-card/index"
     },
     "navigationStyle": "custom",
-    "backgroundColor": "#081410"
+    "backgroundColor": "#081410",
+    "backgroundColorContent": "#081410"
 }

@@ -2,5 +2,6 @@
     "navigationBarTitleText": "开始对局",
     "navigationBarBackgroundColor": "#0c1e17",
     "backgroundColor": "#081410",
-    "usingComponents": {}
+    "usingComponents": {},
+    "backgroundColorContent": "#081410"
 }
