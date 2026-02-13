@@ -2,5 +2,6 @@
     "usingComponents": {
         "record-card": "../../components/record-card/index"
     },
-    "navigationStyle": "custom"
+    "navigationStyle": "custom",
+    "backgroundColor": "#081410"
 }

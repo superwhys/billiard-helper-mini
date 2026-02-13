@@ -20,7 +20,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 32rpx 0 24rpx;
+    padding: 108rpx 0 24rpx;
 }
 
 .greeting {

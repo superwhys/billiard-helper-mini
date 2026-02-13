@@ -3,6 +3,7 @@
 page {
     height: 100%;
     overflow-x: hidden;
+    background-color: #081410;
     background: linear-gradient(180deg, #0c1e17 0%, #0a1a14 50%, #081410 100%);
     color: #e7f5f1;
     font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC',

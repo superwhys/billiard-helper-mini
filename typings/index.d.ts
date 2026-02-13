@@ -2,6 +2,7 @@
 
 interface IAppOption {
     globalData: {
-        statusBarHeight: number
+        statusBarHeight: number,
+        navBarHeight: number,
     }
 }

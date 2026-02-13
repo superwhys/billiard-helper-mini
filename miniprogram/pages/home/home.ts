@@ -45,7 +45,7 @@ function buildRecordItem(match: Match): RecordItem {
 
 Component({
     data: {
-        statusBarHeight: 0,
+        navBarHeight: 0,
         greeting: '',
         userName: '游客',
         avatarText: '?',
@@ -59,7 +59,7 @@ Component({
         attached() {
             const app = getApp<IAppOption>()
             this.setData({
-                statusBarHeight: app.globalData.navBarHeight,
+                navBarHeight: app.globalData.navBarHeight,
                 greeting: getGreeting(),
             })
         },

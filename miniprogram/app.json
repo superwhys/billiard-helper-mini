@@ -10,7 +10,8 @@
         "navigationBarBackgroundColor": "#0c1e17",
         "navigationBarTitleText": "台球计分助手",
         "navigationBarTextStyle": "white",
-        "backgroundColor": "#081410"
+        "backgroundColor": "#081410",
+        "initialRenderingCache": "static"
     },
     "tabBar": {
         "color": "#8fa99e",

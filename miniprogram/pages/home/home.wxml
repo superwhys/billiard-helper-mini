@@ -2,7 +2,7 @@
 <view class="page">
     <scroll-view class="scroll-area" scroll-y enhanced show-scrollbar="{{false}}">
         <!-- 状态栏占位 -->
-        <view style="height: {{statusBarHeight}}px;"></view>
+        <view style="height: {{navBarHeight}}px;"></view>
 
         <!-- 顶部问候 -->
         <view class="header">
