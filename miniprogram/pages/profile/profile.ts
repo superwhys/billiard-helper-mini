@@ -1,5 +1,6 @@
 /** 我的页面 */
 import { getCurrentUser, updateUser, logout } from '../../services/account'
+import { clearTokens } from '../../apis/api'
 import { userStore } from '../../stores/user'
 
 Page({
@@ -57,14 +58,9 @@ Page({
         this.setData({ showEditModal: false })
     },
 
-    /** 输入昵称 */
-    onNameInput(e: WechatMiniprogram.Input) {
-        this.setData({ draftName: e.detail.value })
-    },
-
-    /** 保存昵称 */
-    async saveName() {
-        const nextName = this.data.draftName.trim()
+    /** 通过 form submit 保存昵称（配合 type=nickname 安全检测） */
+    async saveName(e: WechatMiniprogram.FormSubmit) {
+        const nextName = ((e.detail.value as Record<string, string>).nickname || '').trim()
         if (!nextName || this.data.isSaving) return
 
         this.setData({ isSaving: true })
@@ -82,7 +78,7 @@ Page({
             wx.showToast({ title: '保存成功', icon: 'success' })
         } catch (err) {
             console.error('保存失败', err)
-            wx.showToast({ title: '保存失败', icon: 'none' })
+            wx.showToast({ title: (err as Error).message || '保存失败', icon: 'none' })
         } finally {
             this.setData({ isSaving: false })
         }
@@ -99,14 +95,9 @@ Page({
             console.error('退出失败', err)
         } finally {
             userStore.setProfile(null)
-            wx.removeStorageSync('access_token')
-            wx.removeStorageSync('refresh_token')
-            this.setData({
-                displayName: '游客',
-                avatarLetter: '?',
-                isLoggingOut: false,
-            })
-            wx.showToast({ title: '已退出登录', icon: 'none' })
+            clearTokens()
+            this.setData({ isLoggingOut: false })
+            wx.reLaunch({ url: '/pages/login/login' })
         }
     },
 })

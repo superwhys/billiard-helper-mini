@@ -43,25 +43,26 @@
     <view wx:if="{{showEditModal}}" class="modal-mask" bindtap="closeEdit">
         <view class="modal-card" catchtap="">
             <text class="modal-title">修改昵称</text>
-            <input
-                class="name-input"
-                type="text"
-                maxlength="12"
-                placeholder="请输入昵称"
-                value="{{draftName}}"
-                bindinput="onNameInput"
-                bindconfirm="saveName"
-                focus="{{showEditModal}}"
-            />
-            <view class="modal-actions">
-                <view class="modal-button ghost" bindtap="closeEdit">取消</view>
-                <view
-                    class="modal-button primary {{isSaving ? 'is-disabled' : ''}}"
-                    bindtap="saveName"
-                >
-                    保存
+            <form bindsubmit="saveName">
+                <input
+                    class="name-input"
+                    name="nickname"
+                    type="nickname"
+                    maxlength="12"
+                    placeholder="请输入昵称"
+                    value="{{draftName}}"
+                    focus="{{showEditModal}}"
+                />
+                <view class="modal-actions">
+                    <view class="modal-button ghost" bindtap="closeEdit">取消</view>
+                    <button
+                        class="modal-button primary {{isSaving ? 'is-disabled' : ''}}"
+                        form-type="submit"
+                    >
+                        保存
+                    </button>
                 </view>
-            </view>
+            </form>
         </view>
     </view>
 </view>

@@ -150,7 +150,7 @@ Page({
             wx.showToast({ title: '已删除', icon: 'success' })
         } catch (err) {
             console.error('删除失败', err)
-            wx.showToast({ title: '删除失败', icon: 'none' })
+            wx.showToast({ title: (err as Error).message || '删除失败', icon: 'none' })
         } finally {
             this.setData({ isDeleting: false, showDeleteModal: false, deletingId: null })
         }

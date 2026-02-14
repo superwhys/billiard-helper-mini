@@ -3,14 +3,16 @@
         "pages/home/home",
         "pages/records/records",
         "pages/profile/profile",
-        "pages/create-room/create-room"
+        "pages/create-room/create-room",
+        "pages/login/login"
     ],
     "window": {
         "backgroundTextStyle": "dark",
         "navigationBarBackgroundColor": "#0c1e17",
         "navigationBarTitleText": "台球计分助手",
         "navigationBarTextStyle": "white",
-        "backgroundColor": "#081410"
+        "backgroundColor": "#081410",
+        "backgroundColorContent": "#081410"
     },
     "tabBar": {
         "color": "#8fa99e",

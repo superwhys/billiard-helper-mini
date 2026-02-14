@@ -1,0 +1,101 @@
+/* pages/login/login.wxss */
+.page {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(180deg, #0c1e17 0%, #0a1a14 50%, #081410 100%);
+    overflow: hidden;
+}
+
+.content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 64rpx;
+    padding-top: 28vh;
+    padding-bottom: calc(12vh + env(safe-area-inset-bottom));
+}
+
+/* Logo 区域 */
+.logo-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20rpx;
+}
+
+.logo-circle {
+    width: 160rpx;
+    height: 160rpx;
+    border-radius: 50%;
+    background: rgba(28, 58, 48, 0.9);
+    border: 4rpx solid rgba(76, 130, 105, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 24rpx 60rpx rgba(0, 0, 0, 0.3);
+    margin-bottom: 16rpx;
+}
+
+.logo-icon {
+    font-size: 72rpx;
+}
+
+.app-name {
+    font-size: 44rpx;
+    font-weight: 700;
+    color: #e7f5f1;
+    letter-spacing: 4rpx;
+}
+
+.app-desc {
+    font-size: 26rpx;
+    color: rgba(231, 245, 241, 0.5);
+    margin-top: 4rpx;
+}
+
+/* 登录按钮区域 */
+.action-area {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24rpx;
+}
+
+.login-button {
+    width: 100%;
+    padding: 30rpx 0;
+    border-radius: 999rpx;
+    background: linear-gradient(135deg, #62d18b, #4cc777);
+    text-align: center;
+    box-shadow: 0 16rpx 40rpx rgba(44, 155, 99, 0.35);
+    transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.login-button:active {
+    opacity: 0.85;
+    transform: scale(0.98);
+}
+
+.login-button.is-disabled {
+    opacity: 0.6;
+}
+
+.login-text {
+    font-size: 32rpx;
+    font-weight: 600;
+    color: #0d281b;
+    letter-spacing: 2rpx;
+}
+
+.login-tip {
+    font-size: 22rpx;
+    color: rgba(231, 245, 241, 0.35);
+}

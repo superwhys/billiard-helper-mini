@@ -95,6 +95,17 @@ export interface UpdateMatchRequest {
     config_data?: Record<string, unknown>
 }
 
+/** 对局操作请求（下一局/结束对局等） */
+export interface MatchActionRequest {
+    match_id: number
+    player_code?: string
+}
+
+/** 对局详情请求 */
+export interface MatchDetailRequest {
+    match_id: number
+}
+
 // ===== 游戏模式常量 =====
 
 export const NineBallGame: GameMode = {

@@ -262,7 +262,7 @@ Page({
             this.setData({ showAddModal: false, addingName: '' })
         } catch (err) {
             console.error('添加球员失败', err)
-            wx.showToast({ title: '添加失败', icon: 'none' })
+            wx.showToast({ title: (err as Error).message || '添加失败', icon: 'none' })
         }
     },
 
@@ -322,7 +322,7 @@ Page({
                 this.applyMatchToForm(match)
             } catch (err) {
                 console.error('删除球员失败', err)
-                wx.showToast({ title: '删除失败', icon: 'none' })
+                wx.showToast({ title: (err as Error).message || '删除失败', icon: 'none' })
             }
         } else {
             var filtered = this.data.players.filter(function (p) { return p.id !== playerId })
@@ -347,7 +347,7 @@ Page({
             // TODO: 后续对接对局页面后跳转
         } catch (err) {
             console.error('开始对局失败', err)
-            wx.showToast({ title: '开始失败', icon: 'none' })
+            wx.showToast({ title: (err as Error).message || '开始失败', icon: 'none' })
         }
     },
 
@@ -373,7 +373,7 @@ Page({
             wx.navigateBack()
         } catch (err) {
             console.error('删除对局失败', err)
-            wx.showToast({ title: '删除失败', icon: 'none' })
+            wx.showToast({ title: (err as Error).message || '删除失败', icon: 'none' })
         }
         this.setData({ isDeletingMatch: false, showDeleteModal: false })
     },

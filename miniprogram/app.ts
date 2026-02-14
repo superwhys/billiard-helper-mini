@@ -1,4 +1,8 @@
 // app.ts
+import { getCurrentUser } from './services/account'
+import { getToken } from './apis/api'
+import { userStore } from './stores/user'
+
 const BG_COLOR = '#081410'
 
 App<IAppOption>({
@@ -13,11 +17,22 @@ App<IAppOption>({
         this.globalData.statusBarHeight = statusBarHeight
         this.globalData.navBarHeight = statusBarHeight + 44
 
-        // 在原生层设置窗口底色，消除 CSS 加载前的白屏
-        wx.setBackgroundColor({
-            backgroundColor: BG_COLOR,
-            backgroundColorTop: BG_COLOR,
-            backgroundColorBottom: BG_COLOR,
-        })
+        this.checkLogin()
+    },
+
+    /** 检查登录状态，未登录则跳转登录页 */
+    async checkLogin() {
+        const token = getToken()
+        if (!token) {
+            wx.reLaunch({ url: '/pages/login/login' })
+            return
+        }
+
+        try {
+            const user = await getCurrentUser()
+            userStore.setProfile(user)
+        } catch (_err) {
+            // 401 等错误会由 api.ts handleUnauthorized 自动跳转登录页
+        }
     },
 })

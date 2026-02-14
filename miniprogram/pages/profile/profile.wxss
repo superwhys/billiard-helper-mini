@@ -220,7 +220,10 @@
 }
 
 .name-input {
-    padding: 20rpx 28rpx;
+    width: 100%;
+    min-height: 88rpx;
+    line-height: 88rpx;
+    padding: 0 28rpx;
     border-radius: 24rpx;
     border: 2rpx solid rgba(72, 108, 94, 0.6);
     background: rgba(16, 28, 24, 0.9);
@@ -232,6 +235,7 @@
     display: flex;
     justify-content: flex-end;
     gap: 20rpx;
+    margin-top: 24rpx;
 }
 
 .modal-button {
@@ -249,6 +253,17 @@
 .modal-button.primary {
     background: rgba(52, 92, 75, 0.95);
     color: #e6f5ef;
+}
+
+/* 重置 button 默认样式 */
+button.modal-button {
+    margin: 0;
+    border: none;
+    line-height: inherit;
+}
+
+button.modal-button::after {
+    display: none;
 }
 
 .modal-button.is-disabled {

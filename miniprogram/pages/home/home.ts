@@ -76,7 +76,7 @@ Page({
             const profile = results[0]
             const matches = results[1]
             userStore.setProfile(profile)
-            const records = matches.map(function (m) { return buildRecordItem(m) })
+            const records = (matches || []).map(function (m) { return buildRecordItem(m) })
             this.setData({
                 userName: profile.name || '游客',
                 avatarText: (profile.name || '?').slice(0, 1),
@@ -123,7 +123,7 @@ Page({
             wx.navigateTo({ url: '/pages/create-room/create-room?matchId=' + match.id })
         } catch (err) {
             console.error('创建对局失败', err)
-            wx.showToast({ title: '创建失败', icon: 'none' })
+            wx.showToast({ title: (err as Error).message || '创建失败', icon: 'none' })
         }
     },
 
