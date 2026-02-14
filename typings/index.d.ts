@@ -5,5 +5,5 @@ interface IAppOption {
         statusBarHeight: number,
         navBarHeight: number,
     }
-    checkLogin(): Promise<void>
+    tryLoadUser(): Promise<void>
 }

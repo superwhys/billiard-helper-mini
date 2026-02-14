@@ -128,13 +128,9 @@ function refreshAccessToken(): Promise<TokenResponse | null> {
     return refreshPromise
 }
 
+/** 清除鉴权状态，不主动跳转登录页 */
 function handleUnauthorized() {
     clearTokens()
-    const pages = getCurrentPages()
-    const currentPage = pages[pages.length - 1]
-    // 已在登录页则不重复跳转
-    if (currentPage && currentPage.route === 'pages/login/login') return
-    wx.reLaunch({ url: '/pages/login/login' })
 }
 
 // ===== 核心请求方法 =====
@@ -167,7 +163,7 @@ function request<T>(
                                     return request<T>(url, method, data, params, false)
                                 }
                                 handleUnauthorized()
-                                return Promise.reject(new Error(payload?.message || 'Unauthorized'))
+                                return Promise.reject(new Error('需要登录后才能操作'))
                             })
                             .then(resolve)
                             .catch(reject)
@@ -175,7 +171,10 @@ function request<T>(
                     }
 
                     handleUnauthorized()
-                    reject(new Error(payload?.message || 'Unauthorized'))
+                    const msg = payload?.message === 'No Token'
+                        ? '需要登录后才能操作'
+                        : (payload?.message || '需要登录后才能操作')
+                    reject(new Error(msg))
                     return
                 }
 

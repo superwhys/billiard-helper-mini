@@ -1,10 +1,13 @@
 /** 我的页面 */
 import { getCurrentUser, updateUser, logout } from '../../services/account'
-import { clearTokens } from '../../apis/api'
+import { wxLogin } from '../../apis/account'
+import { clearTokens, getToken, setToken, setRefreshToken } from '../../apis/api'
 import { userStore } from '../../stores/user'
 
 Page({
     data: {
+        isLoggedIn: false,
+        isLoggingIn: false,
         displayName: '游客',
         avatarLetter: '?',
         settings: [
@@ -21,26 +24,73 @@ Page({
         this.refreshProfile()
     },
 
-    /** 刷新用户信息 */
+    /** 刷新用户信息，未登录时显示游客状态 */
     async refreshProfile() {
+        const token = getToken()
+        if (!token) {
+            this.setData({
+                isLoggedIn: false,
+                displayName: '游客',
+                avatarLetter: '?',
+            })
+            return
+        }
+
         try {
             const profile = await getCurrentUser()
             userStore.setProfile(profile)
             const name = profile.name || '游客'
             this.setData({
+                isLoggedIn: true,
                 displayName: name,
                 avatarLetter: name.trim() ? name.slice(0, 1).toUpperCase() : '?',
             })
         } catch (err) {
             console.error('获取用户信息失败', err)
+            // token 可能已过期被清除，重新检查
+            if (!getToken()) {
+                this.setData({
+                    isLoggedIn: false,
+                    displayName: '游客',
+                    avatarLetter: '?',
+                })
+                return
+            }
             const cached = userStore.getProfile()
             if (cached) {
                 const name = cached.name || '游客'
                 this.setData({
+                    isLoggedIn: true,
                     displayName: name,
                     avatarLetter: name.trim() ? name.slice(0, 1).toUpperCase() : '?',
                 })
             }
+        }
+    },
+
+    /** 微信一键登录 */
+    async handleLogin() {
+        if (this.data.isLoggingIn) return
+        this.setData({ isLoggingIn: true })
+
+        try {
+            const loginRes = await new Promise<WechatMiniprogram.LoginSuccessCallbackResult>(
+                (resolve, reject) => {
+                    wx.login({ success: resolve, fail: reject })
+                },
+            )
+
+            const tokenRes = await wxLogin({ code: loginRes.code })
+            setToken(tokenRes.access_token)
+            setRefreshToken(tokenRes.refresh_token)
+
+            await this.refreshProfile()
+            wx.showToast({ title: '登录成功', icon: 'success' })
+        } catch (err) {
+            console.error('微信登录失败', err)
+            wx.showToast({ title: (err as Error).message || '登录失败，请重试', icon: 'none' })
+        } finally {
+            this.setData({ isLoggingIn: false })
         }
     },
 
@@ -96,8 +146,13 @@ Page({
         } finally {
             userStore.setProfile(null)
             clearTokens()
-            this.setData({ isLoggingOut: false })
-            wx.reLaunch({ url: '/pages/login/login' })
+            this.setData({
+                isLoggingOut: false,
+                isLoggedIn: false,
+                displayName: '游客',
+                avatarLetter: '?',
+            })
+            wx.showToast({ title: '已退出登录', icon: 'success' })
         }
     },
 })

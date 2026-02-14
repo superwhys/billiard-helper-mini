@@ -3,7 +3,6 @@ import { getCurrentUser } from './services/account'
 import { getToken } from './apis/api'
 import { userStore } from './stores/user'
 
-const BG_COLOR = '#081410'
 
 App<IAppOption>({
     globalData: {
@@ -17,22 +16,19 @@ App<IAppOption>({
         this.globalData.statusBarHeight = statusBarHeight
         this.globalData.navBarHeight = statusBarHeight + 44
 
-        this.checkLogin()
+        this.tryLoadUser()
     },
 
-    /** 检查登录状态，未登录则跳转登录页 */
-    async checkLogin() {
+    /** 尝试加载用户信息，未登录则静默跳过 */
+    async tryLoadUser() {
         const token = getToken()
-        if (!token) {
-            wx.reLaunch({ url: '/pages/login/login' })
-            return
-        }
+        if (!token) return
 
         try {
             const user = await getCurrentUser()
             userStore.setProfile(user)
         } catch (_err) {
-            // 401 等错误会由 api.ts handleUnauthorized 自动跳转登录页
+            // token 过期等错误由 api.ts handleUnauthorized 清除 token
         }
     },
 })

@@ -5,8 +5,7 @@
         "pages/profile/profile",
         "pages/create-room/create-room",
         "pages/nine-ball-game/nine-ball-game",
-        "pages/record-detail/record-detail",
-        "pages/login/login"
+        "pages/record-detail/record-detail"
     ],
     "window": {
         "backgroundTextStyle": "dark",

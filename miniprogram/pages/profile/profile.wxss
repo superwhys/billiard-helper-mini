@@ -164,6 +164,28 @@
     font-size: 32rpx;
 }
 
+/* 登录按钮 */
+.login-button {
+    width: 100%;
+    padding: 28rpx 0;
+    border-radius: 999rpx;
+    border: 2rpx solid rgba(98, 214, 151, 0.7);
+    background: rgba(44, 112, 79, 0.9);
+    color: #e7f5f1;
+    font-size: 28rpx;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 32rpx;
+}
+
+.login-button:active {
+    opacity: 0.8;
+}
+
+.login-button.is-disabled {
+    opacity: 0.6;
+}
+
 /* 退出登录 */
 .logout-button {
     width: 100%;
