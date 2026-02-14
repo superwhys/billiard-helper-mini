@@ -341,10 +341,9 @@ Page({
         if (!matchId) { return }
         await this.updateMatchIfChanged()
         try {
-            var match = await startMatch({ match_id: matchId })
-            gameStore.setCurrentMatch(match)
-            wx.showToast({ title: '对局已开始', icon: 'success' })
-            // TODO: 后续对接对局页面后跳转
+        var match = await startMatch({ match_id: matchId })
+        gameStore.setCurrentMatch(match)
+        wx.redirectTo({ url: '/pages/nine-ball-game/nine-ball-game?matchId=' + matchId })
         } catch (err) {
             console.error('开始对局失败', err)
             wx.showToast({ title: (err as Error).message || '开始失败', icon: 'none' })

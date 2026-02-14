@@ -54,6 +54,7 @@
                     target="{{item.target}}"
                     players="{{item.players}}"
                     status="{{item.status}}"
+                    bind:tap="handleRecordTap"
                 />
             </view>
         </view>

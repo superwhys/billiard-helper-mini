@@ -1,11 +1,16 @@
 /** 首页 */
 import { GAME_MODES, GAME_MODE_TO_MATCH_TYPE, MATCH_TYPE_TEXT } from '../../types/game'
-import type { GameModeId, Match } from '../../types/game'
+import type { GameModeId, Match, MatchType } from '../../types/game'
 import { getCurrentUser } from '../../services/account'
 import { getMatchList, createMatch } from '../../services/game'
 import { userStore } from '../../stores/user'
 import { gameStore } from '../../stores/game'
 import { getGreeting, formatMatchTime } from '../../utils/util'
+
+/** MatchType -> 游戏页面路由 */
+var MATCH_TYPE_GAME_ROUTES: Record<string, string> = {
+    '9ball': '/pages/nine-ball-game/nine-ball-game',
+}
 
 interface RecordPlayer {
     id: number | string
@@ -21,6 +26,7 @@ interface RecordItem {
     target: string
     players: RecordPlayer[]
     status: number
+    matchType?: MatchType
 }
 
 /** 将 Match 转为展示用 RecordItem */
@@ -40,6 +46,7 @@ function buildRecordItem(match: Match): RecordItem {
             }
         }),
         status: match.status || 1,
+        matchType: match.match_type,
     }
 }
 
@@ -54,6 +61,8 @@ Page({
         recentRecords: [] as RecordItem[],
         hasRecentRecords: false,
     },
+
+    _matchMap: {} as Record<number, Match>,
 
     onLoad() {
         const app = getApp<IAppOption>()
@@ -76,6 +85,11 @@ Page({
             const profile = results[0]
             const matches = results[1]
             userStore.setProfile(profile)
+            var matchMap: Record<number, Match> = {}
+            for (var i = 0; i < (matches || []).length; i++) {
+                matchMap[matches[i].id] = matches[i]
+            }
+            this._matchMap = matchMap
             const records = (matches || []).map(function (m) { return buildRecordItem(m) })
             this.setData({
                 userName: profile.name || '游客',
@@ -125,6 +139,40 @@ Page({
             console.error('创建对局失败', err)
             wx.showToast({ title: (err as Error).message || '创建失败', icon: 'none' })
         }
+    },
+
+    /** 点击对局记录卡片，根据状态跳转 */
+    handleRecordTap(e: WechatMiniprogram.CustomEvent<{ recordId: number }>) {
+        var recordId = e.detail.recordId
+        if (!recordId) return
+
+        var record: RecordItem | null = null
+        for (var i = 0; i < this.data.recentRecords.length; i++) {
+            if (this.data.recentRecords[i].id === recordId) {
+                record = this.data.recentRecords[i]
+                break
+            }
+        }
+        if (!record) return
+
+        if (record.status === 1) {
+            var match = this._matchMap[recordId]
+            if (match) { gameStore.setCurrentMatch(match) }
+            wx.navigateTo({ url: '/pages/create-room/create-room?matchId=' + recordId })
+            return
+        }
+
+        if (record.status === 2) {
+            var route = record.matchType ? MATCH_TYPE_GAME_ROUTES[record.matchType] : null
+            if (!route) {
+                wx.showToast({ title: '该玩法暂未支持', icon: 'none' })
+                return
+            }
+            wx.navigateTo({ url: route + '?matchId=' + recordId })
+            return
+        }
+
+        wx.navigateTo({ url: '/pages/record-detail/record-detail?matchId=' + recordId })
     },
 
     /** 跳转到对局记录 */

@@ -2,7 +2,13 @@
 import { RECORD_FILTERS, FILTER_TYPE_MAP, MATCH_TYPE_TEXT } from '../../types/game'
 import type { Match, MatchType } from '../../types/game'
 import { getMatchList, deleteMatch } from '../../services/game'
+import { gameStore } from '../../stores/game'
 import { formatMatchTime } from '../../utils/util'
+
+/** MatchType -> 游戏页面路由 */
+var MATCH_TYPE_GAME_ROUTES: Record<string, string> = {
+    '9ball': '/pages/nine-ball-game/nine-ball-game',
+}
 
 interface RecordPlayer {
     id: number | string
@@ -18,6 +24,7 @@ interface RecordItem {
     target: string
     players: RecordPlayer[]
     status: number
+    matchType?: MatchType
 }
 
 const PAGE_SIZE = 10
@@ -46,6 +53,7 @@ function buildRecordItem(match: Match, fallbackType?: MatchType): RecordItem {
             }
         }),
         status: match.status || 1,
+        matchType: match.match_type,
     }
 }
 
@@ -63,6 +71,8 @@ Page({
         isDeleting: false,
     },
 
+    _matchMap: {} as Record<number, Match>,
+
     onShow() {
         this.loadRecords(true)
     },
@@ -79,12 +89,16 @@ Page({
         const matchType = FILTER_TYPE_MAP[selectedFilter]
 
         this.setData({ isLoading: true })
+        if (isReset) { this._matchMap = {} }
         try {
             const matches = await getMatchList({
                 match_type: matchType,
                 limit: PAGE_SIZE,
                 cursor: this.data.cursor || undefined,
             })
+            for (var i = 0; i < matches.length; i++) {
+                this._matchMap[matches[i].id] = matches[i]
+            }
             const nextItems = matches.map(function (m) { return buildRecordItem(m, matchType) })
             const list = isReset ? nextItems : ([] as RecordItem[]).concat(this.data.recordList, nextItems)
             const lastMatch = matches[matches.length - 1]
@@ -119,6 +133,40 @@ Page({
         if (!this.data.isLoading && this.data.hasMore) {
             this.loadRecords()
         }
+    },
+
+    /** 点击对局记录卡片，根据状态跳转 */
+    handleRecordTap(e: WechatMiniprogram.CustomEvent<{ recordId: number }>) {
+        var recordId = e.detail.recordId
+        if (!recordId) return
+
+        var record: RecordItem | null = null
+        for (var i = 0; i < this.data.recordList.length; i++) {
+            if (this.data.recordList[i].id === recordId) {
+                record = this.data.recordList[i]
+                break
+            }
+        }
+        if (!record) return
+
+        if (record.status === 1) {
+            var match = this._matchMap[recordId]
+            if (match) { gameStore.setCurrentMatch(match) }
+            wx.navigateTo({ url: '/pages/create-room/create-room?matchId=' + recordId })
+            return
+        }
+
+        if (record.status === 2) {
+            var route = record.matchType ? MATCH_TYPE_GAME_ROUTES[record.matchType] : null
+            if (!route) {
+                wx.showToast({ title: '该玩法暂未支持', icon: 'none' })
+                return
+            }
+            wx.navigateTo({ url: route + '?matchId=' + recordId })
+            return
+        }
+
+        wx.navigateTo({ url: '/pages/record-detail/record-detail?matchId=' + recordId })
     },
 
     /** 长按显示删除确认 */

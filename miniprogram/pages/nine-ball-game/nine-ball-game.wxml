@@ -1,0 +1,143 @@
+<!--pages/nine-ball-game/nine-ball-game.wxml-->
+<view class="page">
+
+    <!-- 自定义导航栏 -->
+    <view class="nav-bar" style="padding-top: {{statusBarHeight}}px">
+        <view class="header-row">
+            <view class="back-btn" bindtap="handleBack">
+                <text class="back-icon">‹</text>
+            </view>
+            <view class="header-center">
+                <view class="header-badge">
+                    <text class="badge-round">R{{currentRound}}</text>
+                    <view class="badge-divider"></view>
+                    <text class="badge-target">先{{targetScore || '-'}}胜</text>
+                </view>
+                <text class="header-room">{{roomName}}</text>
+            </view>
+            <view class="header-status">
+                <view class="status-dot"></view>
+            </view>
+        </view>
+    </view>
+
+    <!-- 页面主体 -->
+    <view class="game-page">
+
+        <!-- 玩家区域 -->
+        <view class="players-section">
+            <view
+                wx:for="{{players}}"
+                wx:key="id"
+                class="player-card {{item.id === selectedPlayerId ? 'is-selected' : ''}} {{leaderId === item.id ? 'is-leading' : ''}}"
+                data-player-id="{{item.id}}"
+                bindtap="handleSelectPlayer"
+            >
+                <view class="player-avatar {{item.avatarColor}}">
+                    <text class="avatar-text">{{item.initial}}</text>
+                </view>
+                <view class="player-info">
+                    <text class="player-name">{{item.name}}</text>
+                    <view class="player-score">
+                        <text class="score-value">{{item.totalScore}}</text>
+                        <text class="score-unit">分</text>
+                    </view>
+                </view>
+                <view wx:if="{{item.id === selectedPlayerId}}" class="select-indicator"></view>
+            </view>
+        </view>
+
+        <!-- 当前玩家详情 -->
+        <view wx:if="{{selectedPlayer}}" class="detail-section">
+            <view class="detail-header">
+                <text class="detail-title">{{selectedPlayer.name}} 的统计</text>
+                <text wx:if="{{leaderId === selectedPlayer.id}}" class="detail-badge">领先中</text>
+            </view>
+            <view class="stat-row">
+                <view
+                    wx:for="{{statConfigs}}"
+                    wx:key="key"
+                    class="stat-pill pill-{{item.tone}}"
+                >
+                    <text class="pill-count">{{selectedPlayer.stats[item.key]}}</text>
+                    <text class="pill-label">{{item.label}}</text>
+                </view>
+            </view>
+        </view>
+
+        <!-- 计分按钮区域 -->
+        <view class="action-section">
+            <text class="action-title">快速计分</text>
+            <view class="action-grid">
+                <view
+                    wx:for="{{statConfigs}}"
+                    wx:key="key"
+                    class="action-btn btn-{{item.tone}} {{isGlobalBusy ? 'is-disabled' : ''}}"
+                    data-key="{{item.key}}"
+                    data-delta="{{item.delta}}"
+                    bindtap="handleScoreClick"
+                >
+                    <text class="btn-label">{{isGlobalBusy ? '同步中' : item.label}}</text>
+                    <text wx:if="{{!isGlobalBusy}}" class="btn-delta">{{item.deltaText}}</text>
+                </view>
+            </view>
+        </view>
+
+        <!-- 底部操作栏 -->
+        <view class="control-bar safe-area-bottom">
+            <view class="control-btn undo-btn {{isGlobalBusy ? 'is-disabled' : ''}}" bindtap="handleUndoScore">
+                <text class="btn-icon">↩</text>
+                <text>{{isGlobalBusy ? '同步中' : '撤回'}}</text>
+            </view>
+            <view class="control-btn next-btn {{isGlobalBusy ? 'is-disabled' : ''}}" bindtap="handleNextRound">
+                <text>下一局</text>
+                <text class="btn-icon">→</text>
+            </view>
+            <view class="control-btn end-btn {{isGlobalBusy ? 'is-disabled' : ''}}" bindtap="handleEndMatch">
+                <text>结束</text>
+            </view>
+        </view>
+
+    </view>
+
+    <!-- 扣分/加分弹窗 -->
+    <view wx:if="{{isScoreModalOpen}}" class="score-modal">
+        <view class="modal-mask" bindtap="handleScoreCancel"></view>
+        <view class="modal-card" catchtap="">
+            <text class="modal-title">{{modalTitle}}</text>
+            <text class="modal-desc">{{pendingScoreDisplay}}</text>
+            <view class="modal-list">
+                <view
+                    wx:for="{{deductCandidates}}"
+                    wx:key="id"
+                    class="modal-player {{item.selected ? 'is-selected' : ''}}"
+                    data-player-id="{{item.id}}"
+                    bindtap="handleDeductToggle"
+                >
+                    <text class="modal-player-name">{{item.name}}</text>
+                    <text class="modal-player-score {{modalDeltaClass}}">{{modalDeltaText}}</text>
+                </view>
+            </view>
+            <view class="modal-actions">
+                <view class="modal-cancel {{isGlobalBusy ? 'is-disabled' : ''}}" bindtap="handleScoreCancel">
+                    取消
+                </view>
+                <view
+                    class="modal-confirm {{!hasDeductSelection || isGlobalBusy ? 'is-disabled' : ''}}"
+                    bindtap="handleDeductConfirm"
+                >
+                    {{isGlobalBusy ? '同步中' : '确认'}}
+                </view>
+            </view>
+        </view>
+    </view>
+
+    <!-- 页面加载状态 -->
+    <view wx:if="{{isPageLoading}}" class="page-loading">
+        <view class="loading-card">
+            <view class="loading-dot"></view>
+            <text class="loading-text">加载中</text>
+        </view>
+    </view>
+
+</view>
