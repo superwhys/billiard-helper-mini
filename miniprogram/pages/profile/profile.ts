@@ -155,4 +155,12 @@ Page({
             wx.showToast({ title: '已退出登录', icon: 'success' })
         }
     },
+
+    /** 分享给朋友 */
+    onShareAppMessage() {
+        return {
+            title: '台球计分助手 - 一起来打球吧',
+            path: '/pages/home/home',
+        }
+    },
 })

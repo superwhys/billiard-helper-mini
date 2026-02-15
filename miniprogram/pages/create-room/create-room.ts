@@ -376,4 +376,15 @@ Page({
         }
         this.setData({ isDeletingMatch: false, showDeleteModal: false })
     },
+
+    /** 分享给朋友 */
+    onShareAppMessage() {
+        var title = this.data.roomName
+            ? this.data.roomName + ' - 来一起打球吧'
+            : '台球计分助手 - 一起来打球吧'
+        return {
+            title: title,
+            path: '/pages/home/home',
+        }
+    },
 })

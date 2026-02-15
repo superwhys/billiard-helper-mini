@@ -36,8 +36,8 @@
             />
         </view>
 
-        <!-- 目标局数 -->
-        <view class="form-section">
+        <!-- 目标局数（九球追分不显示） -->
+        <view wx:if="{{!isNineBall}}" class="form-section">
             <view class="field-head">
                 <text class="field-label">目标局数</text>
                 <text class="field-hint">BO(2n-1)</text>

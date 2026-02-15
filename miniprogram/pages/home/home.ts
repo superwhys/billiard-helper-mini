@@ -125,12 +125,13 @@ Page({
         }
         var matchType = GAME_MODE_TO_MATCH_TYPE[modeId]
         var userName = userStore.getName()
+        var targetScore = (matchType === '9ball' || matchType === '8ball') ? 1 : 5
         try {
             var match = await createMatch({
                 match_type: matchType,
                 max_players: mode.maxPlayers,
                 name: userName + '的对局',
-                target_score: 5,
+                target_score: targetScore,
                 virtual_players: [{ nick_name: userName, type: 1 }],
             })
             gameStore.setCurrentMatch(match)
@@ -178,5 +179,13 @@ Page({
     /** 跳转到对局记录 */
     handleGoRecords() {
         wx.switchTab({ url: '/pages/records/records' })
+    },
+
+    /** 分享给朋友 */
+    onShareAppMessage() {
+        return {
+            title: '台球计分助手 - 一起来打球吧',
+            path: '/pages/home/home',
+        }
     },
 })

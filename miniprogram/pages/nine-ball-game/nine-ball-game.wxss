@@ -57,33 +57,6 @@
     gap: 8rpx;
 }
 
-.header-badge {
-    display: flex;
-    align-items: center;
-    gap: 16rpx;
-    padding: 8rpx 24rpx;
-    background: rgba(255, 255, 255, 0.12);
-    border-radius: 999rpx;
-}
-
-.badge-round {
-    font-size: 24rpx;
-    font-weight: 700;
-    color: #67e8b4;
-}
-
-.badge-divider {
-    width: 2rpx;
-    height: 24rpx;
-    background: rgba(255, 255, 255, 0.3);
-}
-
-.badge-target {
-    font-size: 24rpx;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.85);
-}
-
 .header-room {
     font-size: 22rpx;
     color: rgba(255, 255, 255, 0.5);
@@ -462,13 +435,6 @@
     background: rgba(255, 255, 255, 0.08);
     color: rgba(255, 255, 255, 0.75);
     border: 2rpx solid rgba(255, 255, 255, 0.1);
-}
-
-.next-btn {
-    flex: 1.5;
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
-    color: #fff;
-    box-shadow: 0 12rpx 32rpx rgba(59, 130, 246, 0.35);
 }
 
 .end-btn {

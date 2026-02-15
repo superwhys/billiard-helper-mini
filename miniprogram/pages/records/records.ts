@@ -203,4 +203,12 @@ Page({
             this.setData({ isDeleting: false, showDeleteModal: false, deletingId: null })
         }
     },
+
+    /** 分享给朋友 */
+    onShareAppMessage() {
+        return {
+            title: '台球计分助手 - 一起来打球吧',
+            path: '/pages/home/home',
+        }
+    },
 })

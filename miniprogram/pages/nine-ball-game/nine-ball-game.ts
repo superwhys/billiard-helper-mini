@@ -338,9 +338,7 @@ Page({
 
         var pendingScoreLabel = nineBallScoreLabels[key]
         var playerName = this.data.selectedPlayer.name
-        var displayDelta = key === 'foul' ? Math.abs(delta) : -Math.abs(delta)
-        var sign = displayDelta > 0 ? ('+' + displayDelta) : String(displayDelta)
-        var pendingScoreDisplay = '已为 ' + playerName + ' ' + sign + ' 分（' + pendingScoreLabel + '）'
+        var pendingScoreDisplay = '为 ' + playerName + ' 0 分（' + pendingScoreLabel + '）'
 
         var modalTitle = key === 'foul' ? '选择加分玩家' : '选择扣分玩家'
         var modalDeltaAbs = Math.abs(delta)
@@ -376,9 +374,25 @@ Page({
                 break
             }
         }
+
+        var selectedCount = this._pendingDeductPlayerIds.length
+        var key = this._pendingScoreKey! as NineBallScoreKey
+        var delta = this._pendingScoreDelta
+        var scorerName = ''
+        for (var j = 0; j < this.data.players.length; j++) {
+            if (this.data.players[j].id === this._pendingScorePlayerId) {
+                scorerName = this.data.players[j].name
+                break
+            }
+        }
+        var scorerDelta = selectedCount > 0 ? delta * selectedCount : 0
+        var sign = scorerDelta > 0 ? ('+' + scorerDelta) : String(scorerDelta)
+        var pendingScoreDisplay = '为 ' + scorerName + ' ' + sign + ' 分（' + nineBallScoreLabels[key] + (selectedCount > 1 ? ' ×' + selectedCount : '') + '）'
+
         this.setData({
             deductCandidates: candidates,
-            hasDeductSelection: this._pendingDeductPlayerIds.length > 0,
+            hasDeductSelection: selectedCount > 0,
+            pendingScoreDisplay: pendingScoreDisplay,
         })
     },
 
@@ -407,9 +421,10 @@ Page({
                     score: -this._pendingScoreDelta,
                 })
             }
+            var multiplier = this._pendingDeductPlayerIds.length || 1
             scoreActions.push({
                 player_ids: [this._pendingScorePlayerId],
-                score: this._pendingScoreDelta,
+                score: this._pendingScoreDelta * multiplier,
             })
 
             var response = await syncMatchScoreEvent({
@@ -505,6 +520,17 @@ Page({
         } finally {
             this.setData({ isActionPending: false })
             this._updateGlobalBusy()
+        }
+    },
+
+    /** 分享给朋友 */
+    onShareAppMessage() {
+        var title = this.data.roomName
+            ? this.data.roomName + ' - 对局进行中'
+            : '台球计分助手 - 一起来打球吧'
+        return {
+            title: title,
+            path: '/pages/home/home',
         }
     },
 })

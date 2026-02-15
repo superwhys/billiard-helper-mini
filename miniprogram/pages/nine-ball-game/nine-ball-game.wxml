@@ -8,12 +8,8 @@
                 <text class="back-icon">‹</text>
             </view>
             <view class="header-center">
-                <view class="header-badge">
-                    <text class="badge-round">R{{currentRound}}</text>
-                    <view class="badge-divider"></view>
-                    <text class="badge-target">先{{targetScore || '-'}}胜</text>
-                </view>
                 <text class="header-room">{{roomName}}</text>
+                <text>九球追分</text>
             </view>
             <view class="header-status">
                 <view class="status-dot"></view>
@@ -88,10 +84,6 @@
             <view class="control-btn undo-btn {{isGlobalBusy ? 'is-disabled' : ''}}" bindtap="handleUndoScore">
                 <text class="btn-icon">↩</text>
                 <text>{{isGlobalBusy ? '同步中' : '撤回'}}</text>
-            </view>
-            <view class="control-btn next-btn {{isGlobalBusy ? 'is-disabled' : ''}}" bindtap="handleNextRound">
-                <text>下一局</text>
-                <text class="btn-icon">→</text>
             </view>
             <view class="control-btn end-btn {{isGlobalBusy ? 'is-disabled' : ''}}" bindtap="handleEndMatch">
                 <text>结束</text>
