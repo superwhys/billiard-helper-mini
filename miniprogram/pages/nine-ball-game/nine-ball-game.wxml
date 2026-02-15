@@ -110,6 +110,10 @@
                     <text class="modal-player-score {{modalDeltaClass}}">{{modalDeltaText}}</text>
                 </view>
             </view>
+        <view wx:if="{{isDeductMode}}" class="double-toggle" bindtap="handleToggleDoubleDeduct">
+            <view class="double-check {{isDoubleDeduct ? 'is-checked' : ''}}"></view>
+            <text class="double-label">双倍扣分</text>
+        </view>
             <view class="modal-actions">
                 <view class="modal-cancel {{isGlobalBusy ? 'is-disabled' : ''}}" bindtap="handleScoreCancel">
                     取消

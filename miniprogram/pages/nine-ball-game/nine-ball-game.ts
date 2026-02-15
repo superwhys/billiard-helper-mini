@@ -130,6 +130,8 @@ Page({
         // 扣分/加分弹窗
         isScoreModalOpen: false,
         hasDeductSelection: false,
+        isDeductMode: false,
+        isDoubleDeduct: false,
         modalTitle: '',
         pendingScoreDisplay: '',
         modalDeltaText: '',
@@ -288,7 +290,7 @@ Page({
         this._pendingScoreDelta = 0
         this._pendingScorePlayerId = null
         this._pendingDeductPlayerIds = []
-        this.setData({ hasDeductSelection: false })
+        this.setData({ hasDeductSelection: false, isDoubleDeduct: false })
     },
 
     // ===== 用户交互 =====
@@ -348,6 +350,8 @@ Page({
         this.setData({
             isScoreModalOpen: true,
             hasDeductSelection: false,
+            isDeductMode: key !== 'foul',
+            isDoubleDeduct: false,
             deductCandidates: deductCandidates,
             modalTitle: modalTitle,
             pendingScoreDisplay: pendingScoreDisplay,
@@ -376,6 +380,29 @@ Page({
         }
 
         var selectedCount = this._pendingDeductPlayerIds.length
+        var pending = this._buildPendingScoreDisplay(selectedCount)
+
+        this.setData({
+            deductCandidates: candidates,
+            hasDeductSelection: selectedCount > 0,
+            pendingScoreDisplay: pending.pendingScoreDisplay,
+            modalDeltaText: pending.modalDeltaText,
+            isDoubleDeduct: pending.isDoubleDeduct,
+        })
+    },
+
+    handleToggleDoubleDeduct() {
+        if (!this.data.isDeductMode) return
+        var selectedCount = this._pendingDeductPlayerIds.length
+        var pending = this._buildPendingScoreDisplay(selectedCount, !this.data.isDoubleDeduct)
+        this.setData({
+            isDoubleDeduct: pending.isDoubleDeduct,
+            pendingScoreDisplay: pending.pendingScoreDisplay,
+            modalDeltaText: pending.modalDeltaText,
+        })
+    },
+
+    _buildPendingScoreDisplay(selectedCount: number, forceDouble?: boolean) {
         var key = this._pendingScoreKey! as NineBallScoreKey
         var delta = this._pendingScoreDelta
         var scorerName = ''
@@ -385,15 +412,18 @@ Page({
                 break
             }
         }
-        var scorerDelta = selectedCount > 0 ? delta * selectedCount : 0
+        var shouldDouble = this.data.isDeductMode && (forceDouble ?? this.data.isDoubleDeduct)
+        var multiplier = shouldDouble ? 2 : 1
+        var scorerDelta = selectedCount > 0 ? delta * selectedCount * multiplier : 0
         var sign = scorerDelta > 0 ? ('+' + scorerDelta) : String(scorerDelta)
-        var pendingScoreDisplay = '为 ' + scorerName + ' ' + sign + ' 分（' + nineBallScoreLabels[key] + (selectedCount > 1 ? ' ×' + selectedCount : '') + '）'
+        var displayAbs = Math.abs(delta) * (this.data.isDeductMode ? multiplier : 1)
+        var modalDeltaText = key === 'foul' ? ('+' + displayAbs) : ('-' + displayAbs)
+        var pendingScoreDisplay = '为 ' + scorerName + ' ' + sign + ' 分（' + nineBallScoreLabels[key]
+            + (selectedCount > 1 ? ' ×' + selectedCount : '')
+            + (shouldDouble && selectedCount > 0 ? ' ×2' : '')
+            + '）'
 
-        this.setData({
-            deductCandidates: candidates,
-            hasDeductSelection: selectedCount > 0,
-            pendingScoreDisplay: pendingScoreDisplay,
-        })
+        return { pendingScoreDisplay: pendingScoreDisplay, modalDeltaText: modalDeltaText, isDoubleDeduct: shouldDouble }
     },
 
     async handleDeductConfirm() {
@@ -415,13 +445,14 @@ Page({
 
         try {
             var scoreActions = []
+            var perPlayerMultiplier = this.data.isDeductMode && this.data.isDoubleDeduct ? 2 : 1
             if (this._pendingDeductPlayerIds.length) {
                 scoreActions.push({
                     player_ids: this._pendingDeductPlayerIds.slice(),
-                    score: -this._pendingScoreDelta,
+                    score: -this._pendingScoreDelta * perPlayerMultiplier,
                 })
             }
-            var multiplier = this._pendingDeductPlayerIds.length || 1
+            var multiplier = (this._pendingDeductPlayerIds.length || 1) * perPlayerMultiplier
             scoreActions.push({
                 player_ids: [this._pendingScorePlayerId],
                 score: this._pendingScoreDelta * multiplier,
