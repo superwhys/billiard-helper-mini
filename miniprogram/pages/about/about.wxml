@@ -1,0 +1,42 @@
+<!--pages/about/about.wxml-->
+<view class="page">
+    <scroll-view class="scroll-area" scroll-y enhanced show-scrollbar="{{false}}">
+        <view class="hero">
+            <view class="logo">B</view>
+            <text class="app-name">{{appName}}</text>
+            <text class="app-desc">专注台球对局记录与计分</text>
+        </view>
+
+        <view class="card">
+            <text class="section-title">版本信息</text>
+            <view class="info-row">
+                <text class="info-label">当前版本</text>
+                <text class="info-value">{{version}}</text>
+            </view>
+            <view class="info-row">
+                <text class="info-label">运行环境</text>
+                <text class="info-value">{{envLabel}}</text>
+            </view>
+        </view>
+
+        <view class="card">
+            <text class="section-title">功能介绍</text>
+            <text class="section-desc">支持九球比赛的创建、计分、记录与分享。</text>
+            <view class="feature-list">
+                <text class="feature-item">- 快速创建对局并进行计分</text>
+                <text class="feature-item">- 记录每一杆的得分与回合</text>
+                <text class="feature-item">- 回看对局详情与历史记录</text>
+            </view>
+        </view>
+
+        <view class="card">
+            <text class="section-title">联系我们</text>
+            <view class="info-row">
+                <text class="info-label">邮箱</text>
+                <text class="info-value">billiard@superwhys.top</text>
+            </view>
+        </view>
+
+        <view class="bottom-spacer"></view>
+    </scroll-view>
+</view>
