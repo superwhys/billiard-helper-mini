@@ -8,6 +8,7 @@ import { formatMatchTime } from '../../utils/util'
 /** MatchType -> 游戏页面路由 */
 var MATCH_TYPE_GAME_ROUTES: Record<string, string> = {
     '9ball': '/pages/nine-ball-game/nine-ball-game',
+    '8ball': '/pages/eight-ball-game/eight-ball-game',
 }
 
 interface RecordPlayer {

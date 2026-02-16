@@ -10,6 +10,7 @@ import { getGreeting, formatMatchTime } from '../../utils/util'
 /** MatchType -> 游戏页面路由 */
 var MATCH_TYPE_GAME_ROUTES: Record<string, string> = {
     '9ball': '/pages/nine-ball-game/nine-ball-game',
+    '8ball': '/pages/eight-ball-game/eight-ball-game',
 }
 
 interface RecordPlayer {
@@ -125,7 +126,9 @@ Page({
         }
         var matchType = GAME_MODE_TO_MATCH_TYPE[modeId]
         var userName = userStore.getName()
-        var targetScore = (matchType === '9ball' || matchType === '8ball') ? 1 : 5
+        var targetScore = 3
+        if (matchType === '9ball') { targetScore = 1 }
+        
         try {
             var match = await createMatch({
                 match_type: matchType,

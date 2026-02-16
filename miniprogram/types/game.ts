@@ -113,7 +113,7 @@ export const NineBallGame: GameMode = {
 }
 
 export const EightBallGame: GameMode = {
-    id: 'eight-ball', title: '中八', desc: '标准计分', badge: '8', maxPlayers: 2, isEnabled: false,
+    id: 'eight-ball', title: '中八', desc: '标准计分', badge: '8', maxPlayers: 2, isEnabled: true,
 }
 
 export const SnookerGame: GameMode = {

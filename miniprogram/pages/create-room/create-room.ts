@@ -11,6 +11,11 @@ var matchTypeToModeMap: Record<string, GameModeId> = {
     'snooker': 'snooker',
 }
 
+var matchTypeToRouteMap: Record<string, string> = {
+    '9ball': '/pages/nine-ball-game/nine-ball-game',
+    '8ball': '/pages/eight-ball-game/eight-ball-game',
+}
+
 var randomNameAdjectives = ['旋风', '雷霆', '追风', '破浪', '夜影', '疾光', '星河', '流火', '晨曦', '暮影']
 var randomNameNouns = ['球手', '球侠', '猎手', '行者', '之刃', '之星', '战将', '逐影', '破阵', '飞影']
 
@@ -39,9 +44,9 @@ Page({
     data: {
         matchId: 0,
         matchIdText: '--',
-        modeBadge: '9',
-        modeTitle: '九球',
-        modeDesc: '追分赛',
+        modeBadge: '-',
+        modeTitle: '桌球对局',
+        modeDesc: '标准计分',
         modeMaxPlayers: 4,
         modeMeta: '最多 4 人',
         isNineBall: true,
@@ -341,9 +346,15 @@ Page({
         if (!matchId) { return }
         await this.updateMatchIfChanged()
         try {
-        var match = await startMatch({ match_id: matchId })
-        gameStore.setCurrentMatch(match)
-        wx.redirectTo({ url: '/pages/nine-ball-game/nine-ball-game?matchId=' + matchId })
+            var match = await startMatch({ match_id: matchId })
+            if (match) {
+                gameStore.setCurrentMatch(match)
+            }
+            var matchType = match?.match_type
+                || gameStore.getCurrentMatch()?.match_type
+                || '9ball'
+            var route = matchTypeToRouteMap[matchType] || '/pages/nine-ball-game/nine-ball-game'
+            wx.redirectTo({ url: route + '?matchId=' + matchId })
         } catch (err) {
             console.error('开始对局失败', err)
             wx.showToast({ title: (err as Error).message || '开始失败', icon: 'none' })

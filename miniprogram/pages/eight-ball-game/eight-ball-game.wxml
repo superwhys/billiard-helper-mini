@@ -1,0 +1,102 @@
+<!--pages/eight-ball-game/eight-ball-game.wxml-->
+<view class="page">
+
+    <!-- 自定义导航栏 -->
+    <view class="nav-bar" style="padding-top: {{statusBarHeight}}px">
+        <view class="header-row">
+            <view class="back-btn" bindtap="handleBack">
+                <text class="back-icon">‹</text>
+            </view>
+            <view class="header-center">
+                <text class="header-room">{{roomName}}</text>
+                <text>中八计分</text>
+            </view>
+            <view class="header-status">
+                <view class="status-dot"></view>
+            </view>
+        </view>
+    </view>
+
+    <!-- 页面主体 -->
+    <view class="game-page">
+
+        <!-- 玩家区域 -->
+        <view class="players-section">
+            <view
+                wx:for="{{players}}"
+                wx:key="id"
+                class="player-card {{item.id === selectedPlayerId ? 'is-selected' : ''}} {{leaderId === item.id ? 'is-leading' : ''}}"
+                data-player-id="{{item.id}}"
+                bindtap="handleSelectPlayer"
+            >
+                <view class="player-avatar {{item.avatarColor}}">
+                    <text class="avatar-text">{{item.initial}}</text>
+                </view>
+                <view class="player-info">
+                    <text class="player-name">{{item.name}}</text>
+                    <view class="player-score">
+                        <text class="score-value">{{item.totalScore}}</text>
+                        <text class="score-unit">局</text>
+                    </view>
+                </view>
+                <view wx:if="{{item.id === selectedPlayerId}}" class="select-indicator"></view>
+            </view>
+        </view>
+
+        <!-- 当前玩家详情 -->
+        <view wx:if="{{selectedPlayer}}" class="detail-section">
+            <view class="detail-header">
+                <text class="detail-title">{{selectedPlayer.name}} 的计分</text>
+                <text class="detail-badge">BO({{targetScore}})</text>
+            </view>
+            <view class="stat-row">
+                <view class="stat-pill pill-green">
+                    <text class="pill-count">{{selectedPlayer.totalScore}}</text>
+                    <text class="pill-label">已赢</text>
+                </view>
+                <view class="stat-pill pill-amber">
+                    <text class="pill-count">{{remainingScore}}</text>
+                    <text class="pill-label">还差</text>
+                </view>
+            </view>
+        </view>
+
+        <!-- 计分按钮区域 -->
+        <view class="action-section">
+            <text class="action-title">快速计分</text>
+            <view class="action-grid">
+                <view
+                    class="action-btn btn-green {{isGlobalBusy || !canScoreSelected || matchFinished ? 'is-disabled' : ''}}"
+                    data-delta="1"
+                    bindtap="handleScoreClick"
+                >
+                    <text class="btn-label">
+                        {{isGlobalBusy ? '同步中' : (matchFinished ? (winnerName + ' 获胜') : (canScoreSelected ? '胜一局' : '已达胜利'))}}
+                    </text>
+                    <text wx:if="{{!isGlobalBusy && canScoreSelected && !matchFinished}}" class="btn-delta">+1 局</text>
+                </view>
+            </view>
+        </view>
+
+        <!-- 底部操作栏 -->
+        <view class="control-bar safe-area-bottom">
+            <view class="control-btn undo-btn {{isGlobalBusy ? 'is-disabled' : ''}}" bindtap="handleUndoScore">
+                <text class="btn-icon">↩</text>
+                <text>{{isGlobalBusy ? '同步中' : '撤回'}}</text>
+            </view>
+            <view class="control-btn end-btn {{isGlobalBusy ? 'is-disabled' : ''}}" bindtap="handleEndMatch">
+                <text>结束</text>
+            </view>
+        </view>
+
+    </view>
+
+    <!-- 页面加载状态 -->
+    <view wx:if="{{isPageLoading}}" class="page-loading">
+        <view class="loading-card">
+            <view class="loading-dot"></view>
+            <text class="loading-text">加载中</text>
+        </view>
+    </view>
+
+</view>
