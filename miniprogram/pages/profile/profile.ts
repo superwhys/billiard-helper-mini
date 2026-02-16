@@ -11,7 +11,13 @@ Page({
         displayName: '游客',
         avatarLetter: '?',
         settings: [
-            { title: '帮助与反馈', desc: '常见问题与建议入口', icon: 'help', arrow: true },
+            {
+                title: '帮助与反馈',
+                desc: '常见问题与建议入口',
+                icon: 'help',
+                arrow: true,
+                path: '/pages/help-feedback/help-feedback',
+            },
             { title: '关于应用', desc: '版本与开发信息', icon: 'about', arrow: true },
         ],
         showEditModal: false,
@@ -154,6 +160,16 @@ Page({
             })
             wx.showToast({ title: '已退出登录', icon: 'success' })
         }
+    },
+
+    /** 设置项跳转 */
+    handleSettingTap(e: WechatMiniprogram.TouchEvent) {
+        const { path, title } = e.currentTarget.dataset as { path?: string; title?: string }
+        if (path) {
+            wx.navigateTo({ url: path })
+            return
+        }
+        wx.showToast({ title: `${title || '功能'}敬请期待`, icon: 'none' })
     },
 
     /** 分享给朋友 */

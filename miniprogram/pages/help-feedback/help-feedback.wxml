@@ -1,0 +1,56 @@
+<!--pages/help-feedback/help-feedback.wxml-->
+<view class="page">
+    <scroll-view class="scroll-area" scroll-y enhanced show-scrollbar="{{false}}">
+        <view class="hero">
+            <text class="hero-title">帮助与反馈</text>
+            <text class="hero-desc">常见问题与建议入口</text>
+        </view>
+
+        <view class="card">
+            <text class="section-title">常见问题</text>
+            <view class="faq-item">
+                <text class="faq-question">如何创建对局？</text>
+                <text class="faq-answer">前往首页，点击“创建房间”，填写对局信息即可开始计分。</text>
+            </view>
+            <view class="faq-item">
+                <text class="faq-question">如何查看历史记录？</text>
+                <text class="faq-answer">在底部“对局记录”中查看已保存的比赛详情。</text>
+            </view>
+            <view class="faq-item">
+                <text class="faq-question">数据不同步怎么办？</text>
+                <text class="faq-answer">请确认网络正常并重新进入页面，必要时重新登录刷新数据。</text>
+            </view>
+        </view>
+
+        <view class="card">
+            <text class="section-title">反馈与建议</text>
+            <text class="section-desc">欢迎填写改进建议或问题描述，我们会尽快优化体验。</text>
+            <view class="feedback-box">
+                <textarea
+                    class="feedback-input"
+                    placeholder="请详细描述你的建议或遇到的问题"
+                    maxlength="200"
+                    value="{{feedbackContent}}"
+                    bindinput="handleFeedbackInput"
+                />
+                <view class="feedback-footer">
+                    <text class="feedback-count">{{feedbackLength}}/200</text>
+                    <button
+                        class="submit-button {{isSubmitting ? 'is-disabled' : ''}}"
+                        bindtap="submitFeedback"
+                        disabled="{{isSubmitting}}"
+                    >
+                        {{isSubmitting ? '提交中...' : '提交反馈'}}
+                    </button>
+                </view>
+            </view>
+            <view class="tips">
+                <text class="tip-title">建议提供的信息</text>
+                <text class="tip-item">- 出现问题的页面与操作步骤</text>
+                <text class="tip-item">- 设备型号与系统版本</text>
+            </view>
+        </view>
+
+        <view class="bottom-spacer"></view>
+    </scroll-view>
+</view>
