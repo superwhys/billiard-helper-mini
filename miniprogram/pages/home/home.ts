@@ -27,6 +27,8 @@ interface RecordItem {
     target: string
     players: RecordPlayer[]
     status: number
+    winnerId?: number
+    winnerScore?: number
     matchType?: MatchType
 }
 
@@ -47,6 +49,8 @@ function buildRecordItem(match: Match): RecordItem {
             }
         }),
         status: match.status || 1,
+        winnerId: match.winner_id,
+        winnerScore: match.winner_score,
         matchType: match.match_type,
     }
 }

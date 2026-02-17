@@ -34,6 +34,10 @@ function buildRandomPlayerName(existingNames: string[], fallbackId: number): str
     return '玩家 ' + fallbackId
 }
 
+function calcTargetWin(totalRounds: number): number {
+    return Math.floor((totalRounds + 1) / 2)
+}
+
 interface RoomPlayer {
     id: number
     nick_name: string
@@ -52,6 +56,7 @@ Page({
         isNineBall: true,
         roomName: '',
         targetScore: 5,
+        targetWin: 3,
         targetOptions: [3, 5, 7, 9],
         scoreConfigExpanded: false,
         scoreItems: [] as Array<{ key: string; label: string; value: number }>,
@@ -151,6 +156,7 @@ Page({
             isNineBall: isNineBall,
             roomName: (match.name || '').trim(),
             targetScore: match.config ? match.config.target_score : 5,
+            targetWin: calcTargetWin(match.config ? match.config.target_score : 5),
             scoreItems: scoreItems,
             players: playerList,
             canAddPlayer: playerList.length < mode.maxPlayers,
@@ -163,16 +169,22 @@ Page({
     handleSelectTarget(e: WechatMiniprogram.TouchEvent) {
         var option = Number(e.currentTarget.dataset.option)
         if (!option || option <= 0) { return }
-        this.setData({ targetScore: option })
+        this.setData({ targetScore: option, targetWin: calcTargetWin(option) })
         this.updateMatchIfChanged()
     },
 
     handleTargetInput(e: WechatMiniprogram.Input) {
         var value = Number(e.detail.value)
-        if (value > 0) { this.setData({ targetScore: value }) }
+        if (value > 0) { this.setData({ targetScore: value, targetWin: calcTargetWin(value) }) }
     },
 
     handleTargetBlur() {
+        var value = this.data.targetScore
+        if (value > 0 && value % 2 === 0) {
+            var adjusted = value - 1
+            if (adjusted <= 0) { adjusted = 1 }
+            this.setData({ targetScore: adjusted, targetWin: calcTargetWin(adjusted) })
+        }
         this.updateMatchIfChanged()
     },
 

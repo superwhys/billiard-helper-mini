@@ -46,6 +46,8 @@ export interface Match {
     players: Player[]
     status: number
     current_scores?: Record<string, unknown>
+    winner_id?: number
+    winner_score?: number
 }
 
 /** 对局列表请求参数 */

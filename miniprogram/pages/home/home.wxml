@@ -54,6 +54,8 @@
                     target="{{item.target}}"
                     players="{{item.players}}"
                     status="{{item.status}}"
+                    winner-id="{{item.winnerId}}"
+                    winner-score="{{item.winnerScore}}"
                     bind:tap="handleRecordTap"
                 />
             </view>

@@ -38,10 +38,11 @@
 
         <!-- 目标局数（九球追分不显示） -->
         <view wx:if="{{!isNineBall}}" class="form-section">
-            <view class="field-head">
+            <view class="field-head target-head">
                 <text class="field-label">目标局数</text>
-                <text class="field-hint">BO(2n-1)</text>
+                <view class="target-result">{{targetScore}}局{{targetWin}}胜</view>
             </view>
+            <text class="target-sub">BO(2n-1)</text>
             <view class="chip-group">
                 <view
                     wx:for="{{targetOptions}}"

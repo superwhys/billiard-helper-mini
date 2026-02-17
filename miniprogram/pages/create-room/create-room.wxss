@@ -142,6 +142,28 @@
     color: rgba(221, 239, 231, 0.45);
 }
 
+/* ===== 目标局数布局 ===== */
+
+.target-head {
+    align-items: center;
+}
+
+.target-result {
+    padding: 6rpx 18rpx;
+    border-radius: 999rpx;
+    border: 2rpx solid rgba(98, 214, 151, 0.6);
+    background: rgba(34, 64, 54, 0.9);
+    color: #e6f5ef;
+    font-size: 22rpx;
+    font-weight: 600;
+}
+
+.target-sub {
+    font-size: 22rpx;
+    color: rgba(221, 239, 231, 0.45);
+    margin-top: -8rpx;
+}
+
 .text-input {
     width: 100%;
     height: 88rpx;

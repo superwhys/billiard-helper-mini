@@ -8,6 +8,8 @@ Component({
         target: { type: String, value: '' },
         players: { type: Array, value: [] },
         status: { type: Number, value: 1 },
+        winnerId: { type: Number, value: 0 },
+        winnerScore: { type: Number, value: 0 },
     },
 
     data: {
@@ -28,7 +30,11 @@ Component({
                 isFinished: status === 3,
             })
         },
-        'players': function (players: Array<{ id: number | string; name: string; score: number; isWinner?: boolean }>) {
+        'players,winnerId,winnerScore': function (
+            players: Array<{ id: number | string; name: string; score: number; isWinner?: boolean }>,
+            winnerId: number,
+            winnerScore: number,
+        ) {
             if (!players || players.length === 0) {
                 this.setData({
                     winnerPlayer: null,
@@ -41,27 +47,46 @@ Component({
             var allNames = players.map(function (p) { return p.name }).join('、')
             this.setData({ allPlayerNamesText: allNames })
 
-            // 查找胜者（仅已完成状态使用）
+            // 查找胜者（优先使用 winnerId）
             var winner = null
-            var otherNames: string[] = []
-            for (var i = 0; i < players.length; i++) {
-                if (players[i].isWinner) {
-                    winner = players[i]
-                    break
+            if (winnerId) {
+                for (var i = 0; i < players.length; i++) {
+                    if (String(players[i].id) === String(winnerId)) {
+                        winner = players[i]
+                        break
+                    }
                 }
             }
+            if (!winner) {
+                for (var k = 0; k < players.length; k++) {
+                    if (players[k].isWinner) {
+                        winner = players[k]
+                        break
+                    }
+                }
+            }
+            var otherNames: string[] = []
             if (!winner && players.length > 0) {
                 winner = players[0]
             }
             if (winner) {
+                var winnerWithScore = winner
+                if (typeof winnerScore === 'number' && winnerScore > 0) {
+                    winnerWithScore = Object.assign({}, winner, { score: winnerScore })
+                }
                 for (var j = 0; j < players.length; j++) {
-                    if (players[j].id !== winner.id) {
+                    if (String(players[j].id) !== String(winner.id)) {
                         otherNames.push(players[j].name)
                     }
                 }
+                this.setData({
+                    winnerPlayer: winnerWithScore,
+                    otherNamesText: otherNames.length > 0 ? otherNames.join('、') : '暂无其他球员',
+                })
+                return
             }
             this.setData({
-                winnerPlayer: winner,
+                winnerPlayer: null,
                 otherNamesText: otherNames.length > 0 ? otherNames.join('、') : '暂无其他球员',
             })
         },
