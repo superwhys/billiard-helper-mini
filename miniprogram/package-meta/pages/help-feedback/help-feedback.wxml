@@ -17,6 +17,10 @@
                 <text class="faq-answer">在底部“对局记录”中查看已保存的比赛详情。</text>
             </view>
             <view class="faq-item">
+                <text class="faq-question">如何删除对局记录？</text>
+                <text class="faq-answer">在“对局记录”中长按记录，选择“删除”即可。</text>
+            </view>
+            <view class="faq-item">
                 <text class="faq-question">数据不同步怎么办？</text>
                 <text class="faq-answer">请确认网络正常并重新进入页面，必要时重新登录刷新数据。</text>
             </view>

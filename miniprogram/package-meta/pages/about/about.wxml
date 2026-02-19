@@ -21,7 +21,7 @@
 
         <view class="card">
             <text class="section-title">功能介绍</text>
-            <text class="section-desc">支持九球比赛的创建、计分、记录与分享。</text>
+            <text class="section-desc">支持九球追分, 中八, 斯诺克等台球对局的计分、记录与分享。</text>
             <view class="feature-list">
                 <text class="feature-item">- 快速创建对局并进行计分</text>
                 <text class="feature-item">- 记录每一杆的得分与回合</text>
