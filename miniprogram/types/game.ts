@@ -34,6 +34,25 @@ export interface MatchConfig {
     data?: Record<string, unknown>
 }
 
+// {45: {extra: {}, score: 5}, 46: {extra: {}, score: 2}}
+export interface MatchGameScore {
+    [player_id: number]: {
+        extra: Record<string, unknown>
+        score: number
+    }
+}
+
+export interface MatchGame {
+    id: number
+    match_id: number
+    game_num: number
+    start_at: number
+    end_at: number
+    winner_id?: number
+    last_event_id?: number
+    scores?: MatchGameScore
+}
+
 /** 对局 */
 export interface Match {
     match_type: MatchType
@@ -45,7 +64,8 @@ export interface Match {
     owner_id: number
     players: Player[]
     status: number
-    current_scores?: Record<string, unknown>
+    current_scores?: MatchGameScore
+    match_game?: MatchGame[]
     winner_id?: number
     winner_score?: number
 }

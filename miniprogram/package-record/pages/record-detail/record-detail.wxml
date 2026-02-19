@@ -1,8 +1,63 @@
 <!--pages/record-detail/record-detail.wxml-->
 <view class="page">
-    <view class="placeholder">
-        <text class="placeholder-title">对局详情</text>
-        <text class="placeholder-desc">对局 #{{matchId}}</text>
-        <text class="placeholder-hint">功能开发中，敬请期待</text>
+    <view wx:if="{{isLoading}}" class="loading card">
+        <text class="loading-text">加载中...</text>
     </view>
+
+    <block wx:else>
+        <view class="header card">
+            <view class="header-main">
+                <text class="header-title">{{titleText}}</text>
+                <view class="header-tags">
+                    <text class="tag tag-primary">{{statusText}}</text>
+                    <text class="tag">{{matchTypeText}}</text>
+                    <text class="tag">目标 {{targetScoreText}}</text>
+                </view>
+            </view>
+            <view class="header-meta">
+                <text class="meta-item">开始 {{startTimeText}}</text>
+            </view>
+            <view class="info-grid header-info">
+                <view class="info-item">
+                    <text class="info-label">模式</text>
+                    <text class="info-value">{{modeText}}</text>
+                </view>
+                <view class="info-item">
+                    <text class="info-label">胜负</text>
+                    <text class="info-value">{{resultText}}</text>
+                </view>
+            </view>
+        </view>
+
+        <view class="card">
+            <text class="section-title">球员成绩</text>
+            <block wx:if="{{players.length > 0}}">
+                <view wx:for="{{players}}" wx:key="id" class="player-row">
+                    <view class="player-main">
+                        <text class="player-name">{{item.name}}</text>
+                        <text class="player-tag {{item.isWinner ? 'winner' : ''}}">{{item.tag}}</text>
+                    </view>
+                    <text class="player-score">{{item.scoreText}}</text>
+                </view>
+            </block>
+            <view wx:else class="empty-text">暂无球员</view>
+        </view>
+
+        <view class="card">
+            <text class="section-title">关键回合</text>
+            <block wx:if="{{timelines.length > 0}}">
+                <view wx:for="{{timelines}}" wx:key="title" class="timeline-item {{item.muted ? 'muted' : ''}}">
+                    <view class="timeline-dot"></view>
+                    <view class="timeline-content">
+                        <text class="timeline-title">{{item.title}}</text>
+                        <text class="timeline-desc">{{item.desc}}</text>
+                    </view>
+                    <text class="timeline-score">{{item.score}}</text>
+                </view>
+            </block>
+            <view wx:else class="empty-text">暂无回合记录</view>
+        </view>
+
+        <view class="footer-space"></view>
+    </block>
 </view>
