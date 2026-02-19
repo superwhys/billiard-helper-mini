@@ -1,5 +1,5 @@
 /** 用户状态管理，封装本地存储 */
-import type { User } from '../types/user'
+import type { User } from '../apis/account'
 
 const STORAGE_KEY = 'billiard_user_profile'
 

@@ -1,16 +1,16 @@
 /** 首页 */
 import { GAME_MODES, GAME_MODE_TO_MATCH_TYPE, MATCH_TYPE_TEXT } from '../../types/game'
 import type { GameModeId, Match, MatchType } from '../../types/game'
-import { getCurrentUser } from '../../services/account'
-import { getMatchList, createMatch } from '../../services/game'
+import { getCurrentUser } from '../../apis/account'
+import { getMatchList, createMatch } from '../../apis/game'
 import { userStore } from '../../stores/user'
 import { gameStore } from '../../stores/game'
 import { getGreeting, formatMatchTime } from '../../utils/util'
 
 /** MatchType -> 游戏页面路由 */
 var MATCH_TYPE_GAME_ROUTES: Record<string, string> = {
-    '9ball': '/pages/nine-ball-game/nine-ball-game',
-    '8ball': '/pages/eight-ball-game/eight-ball-game',
+    '9ball': '/package-game/pages/nine-ball-game/nine-ball-game',
+    '8ball': '/package-game/pages/eight-ball-game/eight-ball-game',
 }
 
 interface RecordPlayer {
@@ -142,7 +142,7 @@ Page({
                 virtual_players: [{ nick_name: userName, type: 1 }],
             })
             gameStore.setCurrentMatch(match)
-            wx.navigateTo({ url: '/pages/create-room/create-room?matchId=' + match.id })
+            wx.navigateTo({ url: '/package-game/pages/create-room/create-room?matchId=' + match.id })
         } catch (err) {
             console.error('创建对局失败', err)
             wx.showToast({ title: (err as Error).message || '创建失败', icon: 'none' })
@@ -166,7 +166,7 @@ Page({
         if (record.status === 1) {
             var match = this._matchMap[recordId]
             if (match) { gameStore.setCurrentMatch(match) }
-            wx.navigateTo({ url: '/pages/create-room/create-room?matchId=' + recordId })
+            wx.navigateTo({ url: '/package-game/pages/create-room/create-room?matchId=' + recordId })
             return
         }
 
@@ -180,7 +180,7 @@ Page({
             return
         }
 
-        wx.navigateTo({ url: '/pages/record-detail/record-detail?matchId=' + recordId })
+        wx.navigateTo({ url: '/package-record/pages/record-detail/record-detail?matchId=' + recordId })
     },
 
     /** 跳转到对局记录 */

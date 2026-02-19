@@ -1,6 +1,5 @@
 /** 我的页面 */
-import { getCurrentUser, updateUser, logout } from '../../services/account'
-import { wxLogin } from '../../apis/account'
+import { getCurrentUser, updateUser, logout, wxLogin } from '../../apis/account'
 import { clearTokens, getToken, setToken, setRefreshToken } from '../../apis/api'
 import { userStore } from '../../stores/user'
 
@@ -16,14 +15,14 @@ Page({
                 desc: '常见问题与建议入口',
                 icon: 'help',
                 arrow: true,
-                path: '/pages/help-feedback/help-feedback',
+                path: '/package-meta/pages/help-feedback/help-feedback',
             },
             {
                 title: '关于应用',
                 desc: '版本与开发信息',
                 icon: 'about',
                 arrow: true,
-                path: '/pages/about/about',
+                path: '/package-meta/pages/about/about',
             },
         ],
         showEditModal: false,

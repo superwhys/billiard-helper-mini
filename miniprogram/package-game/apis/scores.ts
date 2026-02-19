@@ -1,3 +1,7 @@
+/** 计分模块 API */
+
+import { api } from '../../apis/api'
+
 /** 单次分数变动 */
 export interface ScoreAction {
     player_ids: number[]
@@ -18,3 +22,9 @@ export interface MatchScoreUndoRequest {
     match_id: number
     round: number
 }
+
+export const syncMatchScoreEvent = (data: MatchScoreSyncEvent) =>
+    api.post<Record<string, unknown>>('/score/sync', data)
+
+export const undoMatchScore = (data: MatchScoreUndoRequest) =>
+    api.post<Record<string, unknown>>('/score/undo', data)

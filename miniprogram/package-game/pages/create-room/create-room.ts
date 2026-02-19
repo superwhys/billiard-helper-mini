@@ -1,9 +1,10 @@
 /** 创建/编辑对局页面 */
-import { GAME_MODES, NineBallGame } from '../../types/game'
-import type { GameModeId, Match } from '../../types/game'
+import { GAME_MODES, NineBallGame } from '../../../types/game'
+import type { GameModeId, Match } from '../../../types/game'
 import { nineBallScoreKeys, nineBallScoreLabels, extractNineBallScores } from '../../types/nineball'
-import { updateMatch, joinMatch, leaveMatch, startMatch, deleteMatch } from '../../services/game'
-import { gameStore } from '../../stores/game'
+import { updateMatch, joinMatch, leaveMatch, startMatch } from '../../apis/game'
+import { deleteMatch } from '../../../apis/game'
+import { gameStore } from '../../../stores/game'
 
 var matchTypeToModeMap: Record<string, GameModeId> = {
     '9ball': 'nine-ball',
@@ -12,8 +13,8 @@ var matchTypeToModeMap: Record<string, GameModeId> = {
 }
 
 var matchTypeToRouteMap: Record<string, string> = {
-    '9ball': '/pages/nine-ball-game/nine-ball-game',
-    '8ball': '/pages/eight-ball-game/eight-ball-game',
+    '9ball': '/package-game/pages/nine-ball-game/nine-ball-game',
+    '8ball': '/package-game/pages/eight-ball-game/eight-ball-game',
 }
 
 var randomNameAdjectives = ['旋风', '雷霆', '追风', '破浪', '夜影', '疾光', '星河', '流火', '晨曦', '暮影']
@@ -365,7 +366,7 @@ Page({
             var matchType = match?.match_type
                 || gameStore.getCurrentMatch()?.match_type
                 || '9ball'
-            var route = matchTypeToRouteMap[matchType] || '/pages/nine-ball-game/nine-ball-game'
+            var route = matchTypeToRouteMap[matchType] || '/package-game/pages/nine-ball-game/nine-ball-game'
             wx.redirectTo({ url: route + '?matchId=' + matchId })
         } catch (err) {
             console.error('开始对局失败', err)

@@ -2,13 +2,7 @@
     "pages": [
         "pages/home/home",
         "pages/records/records",
-        "pages/profile/profile",
-        "pages/create-room/create-room",
-        "pages/nine-ball-game/nine-ball-game",
-        "pages/eight-ball-game/eight-ball-game",
-        "pages/record-detail/record-detail",
-        "pages/help-feedback/help-feedback",
-        "pages/about/about"
+        "pages/profile/profile"
     ],
     "window": {
         "backgroundTextStyle": "dark",
@@ -43,5 +37,28 @@
                 "selectedIconPath": "assets/icons/profile-active.png"
             }
         ]
-    }
+    },
+    "subPackages": [
+        {
+            "root": "package-game",
+            "pages": [
+                "pages/create-room/create-room",
+                "pages/nine-ball-game/nine-ball-game",
+                "pages/eight-ball-game/eight-ball-game"
+            ]
+        },
+        {
+            "root": "package-record",
+            "pages": [
+                "pages/record-detail/record-detail"
+            ]
+        },
+        {
+            "root": "package-meta",
+            "pages": [
+                "pages/help-feedback/help-feedback",
+                "pages/about/about"
+            ]
+        }
+    ]
 }

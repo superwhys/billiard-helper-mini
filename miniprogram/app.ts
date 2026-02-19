@@ -1,5 +1,5 @@
 // app.ts
-import { getCurrentUser } from './services/account'
+import { getCurrentUser } from './apis/account'
 import { getToken } from './apis/api'
 import { userStore } from './stores/user'
 

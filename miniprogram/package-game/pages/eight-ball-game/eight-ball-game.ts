@@ -1,8 +1,8 @@
 /** 中八计分页面 */
-import type { Match } from '../../types/game'
+import type { Match } from '../../../types/game'
 import { getMatchDetail, endMatch } from '../../apis/game'
 import { syncMatchScoreEvent, undoMatchScore } from '../../apis/scores'
-import { gameStore } from '../../stores/game'
+import { gameStore } from '../../../stores/game'
 
 interface GamePlayer {
     id: number

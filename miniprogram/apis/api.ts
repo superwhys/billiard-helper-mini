@@ -1,6 +1,9 @@
 /** 公共请求工具，基于 wx.request 封装，统一处理鉴权、错误与 Token 刷新 */
 
-import type { TokenResponse } from '../types/user'
+export interface TokenResponse {
+    access_token: string
+    refresh_token: string
+}
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE'
 

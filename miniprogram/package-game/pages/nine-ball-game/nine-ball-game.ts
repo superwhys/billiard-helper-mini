@@ -1,10 +1,10 @@
 /** 九球追分计分页面 */
 import type { NineBallScoreKey, NineBallScores } from '../../types/nineball'
 import { nineBallScoreKeys, nineBallScoreLabels, extractNineBallScores } from '../../types/nineball'
-import type { Match } from '../../types/game'
+import type { Match } from '../../../types/game'
 import { getMatchDetail, nextMatchRound, endMatch } from '../../apis/game'
 import { syncMatchScoreEvent, undoMatchScore } from '../../apis/scores'
-import { gameStore } from '../../stores/game'
+import { gameStore } from '../../../stores/game'
 
 interface GamePlayerStats {
     big: number

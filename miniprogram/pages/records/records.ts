@@ -1,14 +1,14 @@
 /** 对局记录页 */
 import { RECORD_FILTERS, FILTER_TYPE_MAP, MATCH_TYPE_TEXT } from '../../types/game'
 import type { Match, MatchType } from '../../types/game'
-import { getMatchList, deleteMatch } from '../../services/game'
+import { getMatchList, deleteMatch } from '../../apis/game'
 import { gameStore } from '../../stores/game'
 import { formatMatchTime } from '../../utils/util'
 
 /** MatchType -> 游戏页面路由 */
 var MATCH_TYPE_GAME_ROUTES: Record<string, string> = {
-    '9ball': '/pages/nine-ball-game/nine-ball-game',
-    '8ball': '/pages/eight-ball-game/eight-ball-game',
+    '9ball': '/package-game/pages/nine-ball-game/nine-ball-game',
+    '8ball': '/package-game/pages/eight-ball-game/eight-ball-game',
 }
 
 interface RecordPlayer {
@@ -157,7 +157,7 @@ Page({
         if (record.status === 1) {
             var match = this._matchMap[recordId]
             if (match) { gameStore.setCurrentMatch(match) }
-            wx.navigateTo({ url: '/pages/create-room/create-room?matchId=' + recordId })
+            wx.navigateTo({ url: '/package-game/pages/create-room/create-room?matchId=' + recordId })
             return
         }
 
@@ -171,7 +171,7 @@ Page({
             return
         }
 
-        wx.navigateTo({ url: '/pages/record-detail/record-detail?matchId=' + recordId })
+        wx.navigateTo({ url: '/package-record/pages/record-detail/record-detail?matchId=' + recordId })
     },
 
     /** 长按显示删除确认 */
