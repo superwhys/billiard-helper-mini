@@ -24,6 +24,10 @@ export const userStore = {
         return this.getProfile()?.name || '游客'
     },
 
+    getUserId(): number {
+        return this.getProfile()?.id || 0
+    },
+
     getAvatarLetter(): string {
         const name = this.getName().trim()
         return name ? name.slice(0, 1).toUpperCase() : '?'

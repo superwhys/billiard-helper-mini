@@ -130,6 +130,7 @@ Page({
         }
         var matchType = GAME_MODE_TO_MATCH_TYPE[modeId]
         var userName = userStore.getName()
+        var userId = userStore.getUserId()
         var targetScore = 3
         if (matchType === '9ball') { targetScore = 1 }
         
@@ -139,7 +140,7 @@ Page({
                 max_players: mode.maxPlayers,
                 name: userName + '的对局',
                 target_score: targetScore,
-                virtual_players: [{ nick_name: userName, type: 1 }],
+                virtual_players: [{ nick_name: userName, type: 2, user_id: userId }],
             })
             gameStore.setCurrentMatch(match)
             wx.navigateTo({ url: '/package-game/pages/create-room/create-room?matchId=' + match.id })
