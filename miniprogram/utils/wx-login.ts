@@ -16,8 +16,9 @@ export function requestWxLoginToken(): Promise<TokenResponse | null> {
                             resolve(null)
                             return
                         }
-                        const payload = resp.data as { code: number; data: TokenResponse }
+                        const payload = resp.data as { code: number; data: TokenResponse; message: string }
                         if (payload.code !== 0) {
+                            console.error("wx-login 失败: " + payload.code + " " + payload.message)
                             resolve(null)
                             return
                         }

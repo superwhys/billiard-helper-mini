@@ -18,14 +18,14 @@ function ensureWxLogin(onDone: () => void) {
     requestWxLoginToken()
         .then((tokenRes) => {
             if (!tokenRes) {
-                wx.showModal({ title: '提示', content: '系统异常', showCancel: false })
+                wx.showModal({ title: '提示', content: '系统异常, 请刷新小程序后重试', showCancel: false })
                 return
             }
             setToken(tokenRes.access_token)
             setRefreshToken(tokenRes.refresh_token)
         })
         .catch(() => {
-            wx.showModal({ title: '提示', content: '系统异常', showCancel: false })
+            wx.showModal({ title: '提示', content: '系统异常, 请刷新小程序后重试', showCancel: false })
         })
         .finally(() => {
             wx.hideLoading()
