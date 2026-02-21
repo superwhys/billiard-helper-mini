@@ -4,6 +4,7 @@ interface IAppOption {
     globalData: {
         statusBarHeight: number,
         navBarHeight: number,
+        loginReady?: Promise<void>,
     }
     tryLoadUser(): Promise<void>
 }

@@ -1,7 +1,7 @@
 /** 账户模块 API */
 
 import { api } from './api'
-import type { TokenResponse } from './api'
+import type { TokenResponse } from '../utils/api-types'
 
 /** 用户信息 */
 export interface User {

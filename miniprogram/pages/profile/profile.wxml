@@ -8,19 +8,10 @@
                 <view class="profile-text">
                     <text class="profile-name">{{displayName}}</text>
                     <text wx:if="{{isLoggedIn}}" class="profile-desc">点击右侧按钮可修改</text>
-                    <text wx:else class="profile-desc">登录后解锁更多功能</text>
+                    <text wx:else class="profile-desc">游客模式</text>
                 </view>
             </view>
             <view wx:if="{{isLoggedIn}}" class="profile-action" bindtap="openEdit">修改</view>
-        </view>
-
-        <!-- 未登录时显示登录按钮 -->
-        <view
-            wx:if="{{!isLoggedIn}}"
-            class="login-button {{isLoggingIn ? 'is-disabled' : ''}}"
-            bindtap="handleLogin"
-        >
-            {{isLoggingIn ? '登录中...' : '微信一键登录'}}
         </view>
 
         <!-- 常用设置 -->
@@ -43,15 +34,6 @@
                     <text wx:if="{{item.arrow}}" class="item-arrow">›</text>
                 </view>
             </view>
-        </view>
-
-        <!-- 退出登录按钮（仅已登录时显示） -->
-        <view
-            wx:if="{{isLoggedIn}}"
-            class="logout-button {{isLoggingOut ? 'is-disabled' : ''}}"
-            bindtap="handleLogout"
-        >
-            退出登录
         </view>
 
         <view class="bottom-spacer"></view>

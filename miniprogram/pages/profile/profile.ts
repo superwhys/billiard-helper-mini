@@ -1,12 +1,11 @@
 /** 我的页面 */
-import { getCurrentUser, updateUser, logout, wxLogin } from '../../apis/account'
-import { clearTokens, getToken, setToken, setRefreshToken } from '../../apis/api'
+import { getCurrentUser, updateUser } from '../../apis/account'
+import { getToken } from '../../apis/api'
 import { userStore } from '../../stores/user'
 
 Page({
     data: {
         isLoggedIn: false,
-        isLoggingIn: false,
         displayName: '游客',
         avatarLetter: '?',
         settings: [
@@ -28,7 +27,6 @@ Page({
         showEditModal: false,
         draftName: '',
         isSaving: false,
-        isLoggingOut: false,
     },
 
     onShow() {
@@ -79,32 +77,6 @@ Page({
         }
     },
 
-    /** 微信一键登录 */
-    async handleLogin() {
-        if (this.data.isLoggingIn) return
-        this.setData({ isLoggingIn: true })
-
-        try {
-            const loginRes = await new Promise<WechatMiniprogram.LoginSuccessCallbackResult>(
-                (resolve, reject) => {
-                    wx.login({ success: resolve, fail: reject })
-                },
-            )
-
-            const tokenRes = await wxLogin({ code: loginRes.code })
-            setToken(tokenRes.access_token)
-            setRefreshToken(tokenRes.refresh_token)
-
-            await this.refreshProfile()
-            wx.showToast({ title: '登录成功', icon: 'success' })
-        } catch (err) {
-            console.error('微信登录失败', err)
-            wx.showToast({ title: (err as Error).message || '登录失败，请重试', icon: 'none' })
-        } finally {
-            this.setData({ isLoggingIn: false })
-        }
-    },
-
     /** 打开修改昵称弹窗 */
     openEdit() {
         this.setData({
@@ -142,28 +114,6 @@ Page({
             wx.showToast({ title: (err as Error).message || '保存失败', icon: 'none' })
         } finally {
             this.setData({ isSaving: false })
-        }
-    },
-
-    /** 退出登录 */
-    async handleLogout() {
-        if (this.data.isLoggingOut) return
-
-        this.setData({ isLoggingOut: true })
-        try {
-            await logout()
-        } catch (err) {
-            console.error('退出失败', err)
-        } finally {
-            userStore.setProfile(null)
-            clearTokens()
-            this.setData({
-                isLoggingOut: false,
-                isLoggedIn: false,
-                displayName: '游客',
-                avatarLetter: '?',
-            })
-            wx.showToast({ title: '已退出登录', icon: 'success' })
         }
     },
 

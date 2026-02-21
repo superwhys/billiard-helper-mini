@@ -1,9 +1,8 @@
 /** 公共请求工具，基于 wx.request 封装，统一处理鉴权、错误与 Token 刷新 */
-
-export interface TokenResponse {
-    access_token: string
-    refresh_token: string
-}
+import { getApiBaseUrl } from '../utils/api-base'
+import type { TokenResponse } from '../utils/api-types'
+import { waitLoginReady } from '../utils/login-ready'
+import { requestWxLoginToken } from '../utils/wx-login'
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE'
 
@@ -13,25 +12,13 @@ interface ApiResponse<T> {
     message: string
 }
 
-/** 根据小程序运行环境返回对应的 API 地址 */
-function getApiBaseUrl(): string {
-    const envMap: Record<string, string> = {
-        release: 'https://billiard.superwhys.top/api',   // 正式版
-        trial: 'https://billiard.superwhys.top/api',      // 体验版
-        develop: 'http://127.0.0.1:8080/api',      // 开发版
-    }
-    try {
-        const { miniProgram } = wx.getAccountInfoSync()
-        return envMap[miniProgram.envVersion] || envMap.develop
-    } catch {
-        return envMap.develop
-    }
-}
-
 const API_BASE_URL = getApiBaseUrl()
 const TOKEN_EXPIRED_CODE = 400002
+const INVALID_TOKEN_CODE = 400003
 const TOKEN_KEY = 'access_token'
 const REFRESH_TOKEN_KEY = 'refresh_token'
+
+const SYSTEM_ERROR_MESSAGE = '系统异常，请刷新小程序后重试'
 
 // ===== Token 管理 =====
 
@@ -91,17 +78,41 @@ function getHeaders(): Record<string, string> {
     return headers
 }
 
+async function waitForLoginReady() {
+    try {
+        await waitLoginReady()
+    } catch {
+        // 忽略登录等待异常，继续走后续请求
+    }
+}
+
+function shouldWaitLoginReady(url: string) {
+    if (url === '/account/wx-login') return false
+    return true
+}
+
 // ===== Token 刷新 =====
 
-let refreshPromise: Promise<TokenResponse | null> | null = null
+let refreshPromise: Promise<boolean> | null = null
 
-function refreshAccessToken(): Promise<TokenResponse | null> {
+function reloginByWx(): Promise<TokenResponse | null> {
+    return requestWxLoginToken()
+}
+
+function showSystemErrorModal() {
+    wx.showModal({ title: '提示', content: SYSTEM_ERROR_MESSAGE, showCancel: false })
+}
+
+function refreshAccessToken(): Promise<boolean> {
     if (refreshPromise) return refreshPromise
 
     const refreshToken = getRefreshToken()
-    if (!refreshToken) return Promise.resolve(null)
+    if (!refreshToken) {
+        showSystemErrorModal()
+        return Promise.resolve(false)
+    }
 
-    refreshPromise = new Promise<TokenResponse | null>((resolve) => {
+    refreshPromise = new Promise<boolean>((resolve) => {
         wx.request({
             url: `${API_BASE_URL}/account/refresh`,
             method: 'POST',
@@ -109,18 +120,52 @@ function refreshAccessToken(): Promise<TokenResponse | null> {
             data: { refresh_token: refreshToken },
             success(res) {
                 if (res.statusCode !== 200) {
-                    resolve(null)
+                    showSystemErrorModal()
+                    resolve(false)
                     return
                 }
+
                 const payload = res.data as ApiResponse<TokenResponse>
-                if (payload.code !== 0) {
-                    resolve(null)
+                if (payload.code === 0) {
+                    setToken(payload.data.access_token)
+                    setRefreshToken(payload.data.refresh_token)
+                    resolve(true)
                     return
                 }
-                resolve(payload.data)
+
+                // 无效的 token
+                if (payload.code === INVALID_TOKEN_CODE) {
+                    console.error("refresh token 无效")
+                    showSystemErrorModal()
+                    resolve(false)
+                    return
+                }
+
+                // refresh token 过期, 自动重新登录
+                if (payload.code === TOKEN_EXPIRED_CODE) {
+                    console.error("refresh token 过期, 自动重新登录")
+                    reloginByWx().then((tokenRes) => {
+                        if (!tokenRes) {
+                            showSystemErrorModal()
+                            resolve(false)
+                            return
+                        }
+                        setToken(tokenRes.access_token)
+                        setRefreshToken(tokenRes.refresh_token)
+                        resolve(true)
+                    })
+                    return
+                }
+
+                // 其他错误
+                console.error("刷新 token 失败: " + payload.code + " " + payload.message)
+                showSystemErrorModal()
+                resolve(false)
+                return
             },
             fail() {
-                resolve(null)
+                showSystemErrorModal()
+                resolve(false)
             },
             complete() {
                 refreshPromise = null
@@ -131,7 +176,6 @@ function refreshAccessToken(): Promise<TokenResponse | null> {
     return refreshPromise
 }
 
-/** 清除鉴权状态，不主动跳转登录页 */
 function handleUnauthorized() {
     clearTokens()
 }
@@ -147,57 +191,81 @@ function request<T>(
 ): Promise<T> {
     const fetchUrl = method === 'GET' ? buildUrl(url, params) : `${API_BASE_URL}${url}`
 
-    return new Promise<T>((resolve, reject) => {
-        wx.request({
-            url: fetchUrl,
-            method,
-            header: getHeaders(),
-            data: method === 'GET' ? undefined : data as WechatMiniprogram.IAnyObject,
-            success(res) {
-                const payload = res.data as ApiResponse<T>
-
-                if (res.statusCode === 401) {
-                    if (payload?.code === TOKEN_EXPIRED_CODE && canRetryAuth) {
-                        refreshAccessToken()
-                            .then((refreshed) => {
-                                if (refreshed) {
-                                    setToken(refreshed.access_token)
-                                    setRefreshToken(refreshed.refresh_token)
-                                    return request<T>(url, method, data, params, false)
-                                }
-                                handleUnauthorized()
-                                return Promise.reject(new Error('需要登录后才能操作'))
-                            })
-                            .then(resolve)
-                            .catch(reject)
+    return (async () => {
+        if (shouldWaitLoginReady(url)) {
+            await waitForLoginReady()
+        }
+        return new Promise<T>((resolve, reject) => {
+            wx.request({
+                url: fetchUrl,
+                method,
+                header: getHeaders(),
+                data: method === 'GET' ? undefined : data as WechatMiniprogram.IAnyObject,
+                success(res) {
+                    const payload = res.data as ApiResponse<T>
+                    if (payload?.code === INVALID_TOKEN_CODE) {
+                        wx.showModal({ title: '提示', content: '系统异常，请刷新小程序后重试', showCancel: false })
+                        reject(new Error('系统异常，请刷新小程序后重试'))
                         return
                     }
 
-                    handleUnauthorized()
-                    const msg = payload?.message === 'No Token'
-                        ? '需要登录后才能操作'
-                        : (payload?.message || '需要登录后才能操作')
-                    reject(new Error(msg))
-                    return
-                }
+                    if (res.statusCode === 200) {
+                        if (payload.code !== 0) {
+                            reject(new Error(payload.message || '请求失败'))
+                            return
+                        }
 
-                if (res.statusCode < 200 || res.statusCode >= 300) {
-                    reject(new Error(payload?.message || '网络请求失败，请稍后再试'))
-                    return
-                }
+                        // 请求成功
+                        resolve(payload.data)
+                        return
+                    }
 
-                if (payload.code !== 0) {
-                    reject(new Error(payload.message || '请求失败'))
-                    return
-                }
+                    // 处理鉴权错误
+                    if (res.statusCode === 401) {
+                        // token 过期，刷新 token
+                        if (payload?.code === TOKEN_EXPIRED_CODE && canRetryAuth) {
+                            console.error("token 过期，刷新 token")
+                            ;(async () => {
+                                const refreshed = await refreshAccessToken()
+                                if (refreshed) {
+                                    try {
+                                        const result = await request<T>(url, method, data, params, false)
+                                        resolve(result)
+                                    } catch (err) {
+                                        reject(err)
+                                    }
+                                    return
+                                }
 
-                resolve(payload.data)
-            },
-            fail(err) {
-                reject(new Error(err.errMsg || '网络连接失败，请检查网络'))
-            },
+                                // 刷新 token 失败，清除 token
+                                handleUnauthorized()
+                                reject(new Error('系统异常，请刷新小程序后重试'))
+                            })()
+                            return
+                        }
+
+                        handleUnauthorized()
+                        console.error("鉴权错误: " + res.statusCode + " " + payload?.message)
+                        reject(new Error('系统异常，请刷新小程序后重试'))
+                        return
+                    }
+
+                    // 处理其他错误
+                    if (res.statusCode < 200 || res.statusCode >= 300) {
+                        console.error("网络请求失败: " + res.statusCode)
+                        reject(new Error('网络请求失败，请稍后再试'))
+                        return
+                    }
+
+                    console.error("未知错误: " + res.statusCode)
+                    reject(new Error("未知错误: " + res.statusCode))
+                },
+                fail(err) {
+                    reject(new Error(err.errMsg || '网络连接失败，请检查网络'))
+                },
+            })
         })
-    })
+    })()
 }
 
 // ===== 导出快捷方法 =====
