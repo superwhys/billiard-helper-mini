@@ -69,6 +69,7 @@ Page({
         recordList: [] as RecordItem[],
         hasRecords: false,
         isLoading: false,
+        isRefreshing: false,
         hasMore: true,
         cursor: null as number | null,
         showDeleteModal: false,
@@ -137,6 +138,17 @@ Page({
     handleScrollToLower() {
         if (!this.data.isLoading && this.data.hasMore) {
             this.loadRecords()
+        }
+    },
+
+    /** 下拉刷新 */
+    async handleRefresh() {
+        if (this.data.isRefreshing) return
+        this.setData({ isRefreshing: true })
+        try {
+            await this.loadRecords(true)
+        } finally {
+            this.setData({ isRefreshing: false })
         }
     },
 

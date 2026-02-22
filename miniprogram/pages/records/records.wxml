@@ -19,6 +19,9 @@
         scroll-y
         enhanced
         show-scrollbar="{{false}}"
+        refresher-enabled="{{true}}"
+        refresher-triggered="{{isRefreshing}}"
+        bindrefresherrefresh="handleRefresh"
         bindscrolltolower="handleScrollToLower"
     >
         <view wx:if="{{!hasRecords && !isLoading}}" class="records-empty">暂无记录</view>
