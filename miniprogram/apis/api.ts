@@ -100,7 +100,7 @@ function reloginByWx(): Promise<TokenResponse | null> {
 }
 
 function showSystemErrorModal() {
-    wx.showModal({ title: '提示', content: SYSTEM_ERROR_MESSAGE, showCancel: false })
+    wx.showToast({ title: SYSTEM_ERROR_MESSAGE, icon: 'none' })
 }
 
 function refreshAccessToken(): Promise<boolean> {
@@ -204,7 +204,7 @@ function request<T>(
                 success(res) {
                     const payload = res.data as ApiResponse<T>
                     if (payload?.code === INVALID_TOKEN_CODE) {
-                        wx.showModal({ title: '提示', content: '系统异常，请刷新小程序后重试', showCancel: false })
+                        wx.showToast({ title: '系统异常，请刷新小程序后重试', icon: 'none' })
                         reject(new Error('系统异常，请刷新小程序后重试'))
                         return
                     }
@@ -261,6 +261,7 @@ function request<T>(
                     reject(new Error("未知错误: " + res.statusCode))
                 },
                 fail(err) {
+                    wx.showToast({ title: '网络连接失败，请检查网络', icon: 'none' })
                     reject(new Error(err.errMsg || '网络连接失败，请检查网络'))
                 },
             })
