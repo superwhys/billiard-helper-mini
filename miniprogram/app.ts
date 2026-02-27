@@ -5,6 +5,8 @@ import { userStore } from './stores/user'
 import { markLoginReady, waitLoginReady } from './utils/login-ready'
 import { requestWxLoginToken } from './utils/wx-login'
 
+let shouldShowInitialUserLoading = true
+
 /** 启动时自动微信登录，获取基础 token */
 function ensureWxLogin(onDone: () => void) {
     const token = getToken()
@@ -57,11 +59,21 @@ App<IAppOption>({
         const token = getToken()
         if (!token) return
 
+        const withLoading = shouldShowInitialUserLoading
+        if (withLoading) {
+            wx.showLoading({ title: '加载中', mask: true })
+        }
+
         try {
             const user = await getCurrentUser()
             userStore.setProfile(user)
         } catch (_err) {
             // token 过期等错误由 api.ts handleUnauthorized 清除 token
+        } finally {
+            if (withLoading) {
+                wx.hideLoading()
+                shouldShowInitialUserLoading = false
+            }
         }
     },
 

@@ -225,7 +225,7 @@ Page({
 
     // ===== 更新对局 =====
 
-    async updateMatchIfChanged() {
+    async updateMatchIfChanged(withLoading = true) {
         var matchId = this.data.matchId
         if (!matchId) { return }
         var name = this.data.roomName.trim()
@@ -239,11 +239,18 @@ Page({
                 configData[item.key] = item.value
             }
         }
+        if (withLoading) {
+            wx.showLoading({ title: '保存中', mask: true })
+        }
         try {
             var match = await updateMatch({ match_id: matchId, name: name, target_score: target, config_data: configData })
             gameStore.setCurrentMatch(match)
         } catch (err) {
             console.error('更新对局失败', err)
+        } finally {
+            if (withLoading) {
+                wx.hideLoading()
+            }
         }
     },
 
@@ -273,6 +280,7 @@ Page({
             wx.showToast({ title: '请输入球员名称', icon: 'none' })
             return
         }
+        wx.showLoading({ title: '添加中', mask: true })
         try {
             var match = await joinMatch({ match_id: matchId, nick_name: name, player_type: 1 })
             gameStore.setCurrentMatch(match)
@@ -281,6 +289,8 @@ Page({
         } catch (err) {
             console.error('添加球员失败', err)
             wx.showToast({ title: (err as Error).message || '添加失败', icon: 'none' })
+        } finally {
+            wx.hideLoading()
         }
     },
 
@@ -334,6 +344,7 @@ Page({
         this.setData({ swipedPlayerId: 0 })
         var matchId = this.data.matchId
         if (matchId && player.player_code) {
+            wx.showLoading({ title: '删除中', mask: true })
             try {
                 var match = await leaveMatch({ match_id: matchId, player_code: player.player_code })
                 gameStore.setCurrentMatch(match)
@@ -341,6 +352,8 @@ Page({
             } catch (err) {
                 console.error('删除球员失败', err)
                 wx.showToast({ title: (err as Error).message || '删除失败', icon: 'none' })
+            } finally {
+                wx.hideLoading()
             }
         } else {
             var filtered = this.data.players.filter(function (p) { return p.id !== playerId })
@@ -357,8 +370,9 @@ Page({
     async handleStartGame() {
         var matchId = this.data.matchId
         if (!matchId) { return }
-        await this.updateMatchIfChanged()
+        wx.showLoading({ title: '开始中', mask: true })
         try {
+            await this.updateMatchIfChanged(false)
             var match = await startMatch({ match_id: matchId })
             if (match) {
                 gameStore.setCurrentMatch(match)
@@ -371,6 +385,8 @@ Page({
         } catch (err) {
             console.error('开始对局失败', err)
             wx.showToast({ title: (err as Error).message || '开始失败', icon: 'none' })
+        } finally {
+            wx.hideLoading()
         }
     },
 
@@ -390,6 +406,7 @@ Page({
         var matchId = this.data.matchId
         if (!matchId || this.data.isDeletingMatch) { return }
         this.setData({ isDeletingMatch: true })
+        wx.showLoading({ title: '删除中', mask: true })
         try {
             await deleteMatch({ match_id: matchId })
             gameStore.clearCurrentMatch()
@@ -397,8 +414,10 @@ Page({
         } catch (err) {
             console.error('删除对局失败', err)
             wx.showToast({ title: (err as Error).message || '删除失败', icon: 'none' })
+        } finally {
+            wx.hideLoading()
+            this.setData({ isDeletingMatch: false, showDeleteModal: false })
         }
-        this.setData({ isDeletingMatch: false, showDeleteModal: false })
     },
 
     /** 分享给朋友 */
