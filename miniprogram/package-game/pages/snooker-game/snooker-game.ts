@@ -1,7 +1,6 @@
 /** 斯诺克计分；比分、球序和撤销均以服务端快照为准。 */
-import type { Match, MatchGameScore } from '../../../types/game'
-import { snookerBalls, type SnookerState } from '../../../types/snooker'
-import { readSnookerState, isSnookerBallAllowed, snookerTargetLabel } from '../../../utils/snooker'
+import type { Match, MatchGameScore, SnookerState } from '../../../types/game'
+import { snookerBalls, readSnookerState, isSnookerBallAllowed, snookerTargetLabel } from '../../utils/snooker'
 import { snookerFrameWins } from '../../../utils/match'
 import { gameStore } from '../../../stores/game'
 import { getMatchDetail, nextMatchRound } from '../../apis/game'

@@ -1,5 +1,3 @@
-import type { SnookerState } from './snooker'
-
 /** 游戏模式 ID */
 export type GameModeId = 'nine-ball' | 'eight-ball' | 'snooker' | 'more'
 
@@ -35,6 +33,27 @@ export interface MatchConfig {
     max_players: number
     target_score: number
     data?: Record<string, unknown>
+}
+
+/** 斯诺克台面快照 */
+export interface SnookerState {
+    red_count: number
+    reds_remaining: number
+    next_ball:
+        | 'red'
+        | 'colour'
+        | 'yellow'
+        | 'green'
+        | 'brown'
+        | 'blue'
+        | 'pink'
+        | 'black'
+        | 'respotted_black'
+        | 'done'
+    active_player_id: number
+    break_score: number
+    remaining_points: number
+    can_undo: boolean
 }
 
 // {45: {extra: {}, score: 5}, 46: {extra: {}, score: 2}}

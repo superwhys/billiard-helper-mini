@@ -5,7 +5,7 @@ import { nineBallScoreKeys, nineBallScoreLabels, extractNineBallScores } from '.
 import { updateMatch, joinMatch, leaveMatch, startMatch } from '../../apis/game'
 import { deleteMatch } from '../../../apis/game'
 import { gameStore } from '../../../stores/game'
-import { maximumSnookerBreak } from '../../../types/snooker'
+import { maximumSnookerBreak } from '../../utils/snooker'
 
 var matchTypeToModeMap: Record<string, GameModeId> = {
     '9ball': 'nine-ball',
