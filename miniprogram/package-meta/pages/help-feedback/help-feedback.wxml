@@ -13,6 +13,10 @@
                 <text class="faq-answer">前往首页，点击“创建房间”，填写对局信息即可开始计分。</text>
             </view>
             <view class="faq-item">
+                <text class="faq-question">斯诺克如何记分？</text>
+                <text class="faq-answer">创建对局时可选 1–15 颗红球和奇数局赛制。选择球员后点击进球颜色，系统按红彩交替和清彩顺序记分；未进球时点击换人结束单杆。犯规给对手加 4–7 分，可填写离台红球数或要求犯规者继续。撤销可恢复比分、单杆与台面状态。每局结束后结算或认输，达到目标胜局数后自动结束整场。自由球等特殊情况暂不自动处理。</text>
+            </view>
+            <view class="faq-item">
                 <text class="faq-question">如何查看历史记录？</text>
                 <text class="faq-answer">在底部“对局记录”中查看已保存的比赛详情。</text>
             </view>

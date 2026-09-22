@@ -64,6 +64,24 @@
             </view>
         </view>
 
+        <view wx:if="{{isSnooker}}" class="form-section">
+            <view class="field-head">
+                <text class="field-label">红球数量</text>
+                <text class="target-result">理论单杆满分 {{maximumBreak}}</text>
+            </view>
+            <text class="target-sub">1–15 颗红球，满分 = 红球数 × 8 + 27</text>
+            <view class="chip-group">
+                <view wx:for="{{redOptions}}" wx:key="*this"
+                    class="chip {{item == redCount ? 'is-active' : ''}}"
+                    data-count="{{item}}" bindtap="handleSelectRedCount">{{item}} 颗</view>
+                <view class="chip custom-chip">
+                    <text class="custom-chip-label">自定义</text>
+                    <input class="chip-input" type="number" value="{{redCount}}"
+                        bindinput="handleRedCountInput" bindblur="handleRedCountBlur" />
+                </view>
+            </view>
+        </view>
+
         <!-- 分数配置（九球专用） -->
         <view wx:if="{{isNineBall}}" class="score-config-section">
             <view class="score-config-trigger" bindtap="handleToggleScoreConfig">
@@ -89,7 +107,7 @@
         <view class="player-section">
             <view class="field-head">
                 <text class="field-label">球员（1-{{modeMaxPlayers}}人）</text>
-                <view class="add-link {{!canAddPlayer ? 'is-disabled' : ''}}" bindtap="handleOpenAdd">+ 添加</view>
+                <view class="add-link {{!canAddPlayer || isPlayerPending ? 'is-disabled' : ''}}" bindtap="handleOpenAdd">+ 添加</view>
             </view>
             <view class="player-list">
                 <view
@@ -124,7 +142,8 @@
 
         <!-- 操作按钮 -->
         <view class="action-bar">
-            <view class="primary-button" bindtap="handleStartGame">开始对局</view>
+            <text wx:if="{{formError}}" class="form-error">{{formError}}</text>
+            <view class="primary-button {{isStarting || isPlayerPending ? 'is-disabled' : ''}}" bindtap="handleStartGame">{{isStarting ? '正在开始…' : isPlayerPending ? '正在更新球员…' : '开始对局'}}</view>
             <view class="danger-button {{isDeletingMatch ? 'is-disabled' : ''}}" bindtap="handleOpenDeleteMatch">删除比赛</view>
         </view>
 
@@ -140,12 +159,13 @@
                 type="text"
                 placeholder="请输入球员名称"
                 value="{{addingName}}"
+                disabled="{{isPlayerPending}}"
                 bindinput="handleAddNameInput"
                 focus="{{showAddModal}}"
             />
             <view class="modal-actions">
-                <view class="modal-button ghost" bindtap="handleCloseAdd">取消</view>
-                <view class="modal-button" bindtap="handleConfirmAdd">确定</view>
+                <view class="modal-button ghost {{isPlayerPending ? 'is-disabled' : ''}}" bindtap="handleCloseAdd">取消</view>
+                <view class="modal-button {{isPlayerPending ? 'is-disabled' : ''}}" bindtap="handleConfirmAdd">{{isPlayerPending ? '正在添加…' : '确定'}}</view>
             </view>
         </view>
     </view>

@@ -2,7 +2,7 @@
 
 import { api } from '../../apis/api'
 import type {
-    Match, MatchActionRequest, MatchDetailRequest,
+    Match, MatchActionRequest, MatchRoundNextRequest, MatchDetailRequest,
     StartMatchRequest, JoinMatchRequest, LeaveMatchRequest, UpdateMatchRequest,
 } from '../../types/game'
 
@@ -16,12 +16,12 @@ export const joinMatch = (data: JoinMatchRequest) =>
     api.post<Match>('/match/join', data)
 
 export const leaveMatch = (data: LeaveMatchRequest) =>
-    api.post<Match>('/match/leave', data)
+    api.post<null>('/match/leave', data)
 
 export const updateMatch = (data: UpdateMatchRequest) =>
     api.post<Match>('/match/update', data)
 
-export const nextMatchRound = (data: MatchActionRequest) =>
+export const nextMatchRound = (data: MatchRoundNextRequest) =>
     api.post<Match>('/match/round/next', data)
 
 export const endMatch = (data: MatchActionRequest) =>

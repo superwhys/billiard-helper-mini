@@ -3,12 +3,14 @@ import { RECORD_FILTERS, FILTER_TYPE_MAP, MATCH_TYPE_TEXT } from '../../types/ga
 import type { Match, MatchType } from '../../types/game'
 import { getMatchList, deleteMatch } from '../../apis/game'
 import { gameStore } from '../../stores/game'
+import { snookerFrameWins } from '../../utils/match'
 import { formatMatchTime } from '../../utils/util'
 
 /** MatchType -> 游戏页面路由 */
 var MATCH_TYPE_GAME_ROUTES: Record<string, string> = {
     '9ball': '/package-game/pages/nine-ball-game/nine-ball-game',
     '8ball': '/package-game/pages/eight-ball-game/eight-ball-game',
+    'snooker': '/package-game/pages/snooker-game/snooker-game',
 }
 
 interface RecordPlayer {
@@ -47,12 +49,14 @@ function buildRecordItem(match: Match, fallbackType?: MatchType): RecordItem {
         title: (match.name && match.name.trim()) || ('对局 #' + match.id),
         mode: modeText,
         time: formatMatchTime(match.created_at),
-        target: targetScore + ' 局',
+        target: match.match_type === 'snooker'
+            ? targetScore + ' 局 ' + (Math.floor(targetScore / 2) + 1) + ' 胜'
+            : targetScore + ' 局',
         players: (match.players || []).map(function (player, index) {
             return {
                 id: player.id || player.code || (index + 1),
                 name: player.nick_name || ('玩家 ' + (index + 1)),
-                score: 0,
+                score: match.match_type === 'snooker' ? snookerFrameWins(match, player.id || 0) : 0,
             }
         }),
         status: match.status || 1,

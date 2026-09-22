@@ -3,6 +3,7 @@ import type { Match } from '../../../types/game'
 import { MATCH_TYPE_TEXT } from '../../../types/game'
 import { getMatchDetail } from '../../../apis/game'
 import { formatMatchTime } from '../../../utils/util'
+import { snookerFrameWins } from '../../../utils/match'
 
 type PlayerItem = {
     id: number | string
@@ -28,6 +29,7 @@ Page({
         matchId: 0,
         isLoading: true,
         statusText: '未开始',
+        isSnooker: false,
         titleText: '对局详情',
         matchTypeText: '--',
         targetScoreText: '--',
@@ -75,7 +77,7 @@ Page({
         var statusText = this.buildStatusText(match.status)
         var startTimeText = formatMatchTime(match.created_at)
         var modeText = matchTypeText
-        if (match.match_type === '8ball' && targetScore) {
+        if ((match.match_type === '8ball' || match.match_type === 'snooker') && targetScore) {
             var targetWin = calcTargetWin(targetScore)
             modeText = targetScore + '局' + targetWin + '胜'
         }
@@ -85,6 +87,7 @@ Page({
         var timelines = this.buildTimelineItems(match, statusText)
 
         this.setData({
+            isSnooker: match.match_type === 'snooker',
             titleText: titleText,
             statusText: statusText,
             matchTypeText: matchTypeText,
@@ -123,7 +126,9 @@ Page({
             var name = player.nick_name || ('玩家 ' + (index + 1))
             var isWinner = winnerId ? String(winnerId) === String(id) : false
             var scoreItem = (scoreMap as unknown as Record<string, { score: number }>)[String(id)]
-            var scoreText = scoreItem && typeof scoreItem.score === 'number'
+            var scoreText = match.match_type === 'snooker'
+                ? snookerFrameWins(match, Number(id)) + ' 局'
+                : scoreItem && typeof scoreItem.score === 'number'
                 ? String(scoreItem.score)
                 : '--'
             return {
@@ -137,6 +142,23 @@ Page({
     },
 
     buildTimelineItems(match: Match, statusText: string): TimelineItem[] {
+        if (match.match_type === 'snooker') {
+            return (match.match_games || []).slice().sort(function (a, b) {
+                return b.game_num - a.game_num
+            }).map(function (game) {
+                var winner = match.players.find(function (player) { return player.id === game.winner_id })
+                return {
+                    title: '第 ' + game.game_num + ' 局',
+                    desc: (game.end_at ? '已结束' : statusText)
+                        + (winner ? ' · ' + (winner.nick_name || '球员') + ' 胜' : '')
+                        + ' · ' + match.players.map(function (player) {
+                            return (player.nick_name || '球员') + ' ' + (game.scores?.[player.id || 0]?.score ?? 0)
+                        }).join(' / '),
+                    score: '',
+                    muted: false,
+                }
+            })
+        }
         var round = match.match_round || 1
         return [
             {

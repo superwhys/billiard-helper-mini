@@ -1,3 +1,5 @@
+import type { SnookerState } from './snooker'
+
 /** 游戏模式 ID */
 export type GameModeId = 'nine-ball' | 'eight-ball' | 'snooker' | 'more'
 
@@ -25,6 +27,7 @@ export interface Player {
     nick_name?: string
     type?: PlayerType
     user_id?: number
+    scores?: number
 }
 
 /** 对局配置 */
@@ -36,6 +39,7 @@ export interface MatchConfig {
 
 // {45: {extra: {}, score: 5}, 46: {extra: {}, score: 2}}
 export interface MatchGameScore {
+    _snooker?: SnookerState
     [player_id: number]: {
         extra: Record<string, unknown>
         score: number
@@ -65,7 +69,7 @@ export interface Match {
     players: Player[]
     status: number
     current_scores?: MatchGameScore
-    match_game?: MatchGame[]
+    match_games?: MatchGame[]
     winner_id?: number
     winner_score?: number
 }
@@ -123,6 +127,13 @@ export interface MatchActionRequest {
     player_code?: string
 }
 
+/** 下一局请求：斯诺克必须携带当前局号 */
+export interface MatchRoundNextRequest {
+    match_id: number
+    round?: number
+    conceding_player_id?: number
+}
+
 /** 对局详情请求 */
 export interface MatchDetailRequest {
     match_id: number
@@ -139,7 +150,7 @@ export const EightBallGame: GameMode = {
 }
 
 export const SnookerGame: GameMode = {
-    id: 'snooker', title: '斯诺克', desc: '147满分制', badge: '●', maxPlayers: 2, isEnabled: false,
+    id: 'snooker', title: '斯诺克', desc: '红彩交替 · 逐局计分', badge: '●', maxPlayers: 2, isEnabled: true,
 }
 
 export const MoreGame: GameMode = {

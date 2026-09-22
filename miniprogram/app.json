@@ -44,7 +44,8 @@
             "pages": [
                 "pages/create-room/create-room",
                 "pages/nine-ball-game/nine-ball-game",
-                "pages/eight-ball-game/eight-ball-game"
+                "pages/eight-ball-game/eight-ball-game",
+                "pages/snooker-game/snooker-game"
             ]
         },
         {

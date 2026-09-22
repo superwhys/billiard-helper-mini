@@ -1,0 +1,112 @@
+<view class="page">
+    <view wx:if="{{loading}}" class="card empty-state">正在加载比赛…</view>
+    <view wx:elif="{{!ready}}" class="card empty-state">
+        <text class="error-text">{{error || '正在跳转…'}}</text>
+        <button class="button" disabled="{{busy}}" bindtap="loadMatch">重新加载</button>
+    </view>
+    <block wx:else>
+        <view class="card">
+            <text class="eyebrow">SNOOKER</text>
+            <text class="room-name">{{roomName}}</text>
+            <view class="heading-meta">
+                <text class="tag">第 {{currentRound}} 局</text>
+                <text class="muted">{{targetScore}}局{{winTarget}}胜</text>
+                <button class="text-button refresh-button" disabled="{{busy}}" bindtap="loadMatch">刷新</button>
+            </view>
+        </view>
+        <text wx:if="{{!online}}" class="error-text message">网络已断开，请恢复连接后再记分</text>
+        <view wx:if="{{error && !dialog}}" class="message">
+            <text class="error-text">{{error}}</text>
+            <text wx:if="{{needsRefresh}}" class="muted">请点击刷新确认最新比分后继续。</text>
+        </view>
+        <view wx:if="{{table}}" class="card table-stats">
+            <view class="stat"><text class="muted">剩余红球</text><text class="stat-value">{{table.reds_remaining}}<text class="unit"> / {{table.red_count}}</text></text></view>
+            <view class="stat"><text class="muted">当前单杆</text><text class="stat-value">{{table.break_score}}<text class="unit"> 分</text></text></view>
+            <view class="stat"><text class="muted">领先分数</text><text class="stat-value">{{leadPoints}}<text class="unit"> 分</text></text></view>
+            <view class="stat"><text class="muted">台面剩余</text><text class="stat-value">{{table.remaining_points}}<text class="unit"> 分</text></text></view>
+        </view>
+        <text wx:else class="muted message">旧版对局未保存球序，本局继续手动记分；下一局启用红球数量与顺序限制。</text>
+
+        <view class="card">
+            <view class="section-head"><text class="section-title">本局比分</text><text class="muted">点击球员换人</text></view>
+            <button wx:for="{{players}}" wx:key="id"
+                class="player {{selectedId === item.id ? 'selected' : ''}}"
+                disabled="{{busy || !online || needsRefresh || table.next_ball === 'done'}}"
+                data-id="{{item.id}}" bindtap="handleSwitch">
+                <view class="player-info"><text class="player-name">{{item.name}}</text><text class="muted">已赢 {{item.frames}} 局 · {{selectedId === item.id ? '正在击球' : '点击选择'}}</text></view>
+                <text class="player-score">{{item.score}}<text class="unit">分</text></text>
+            </button>
+            <text class="muted lead-text">{{leaderName ? leaderName + ' 领先 ' + leadPoints + ' 分' : '当前平分'}}</text>
+        </view>
+
+        <view class="card">
+            <text class="section-title">为 {{selectedName}} 记分</text>
+            <text class="target-hint">{{targetLabel}}</text>
+            <view class="ball-grid">
+                <button wx:for="{{balls}}" wx:key="key" class="ball-button"
+                    disabled="{{busy || !online || needsRefresh || !item.allowed}}"
+                    data-key="{{item.key}}" bindtap="handleBall">
+                    <view class="ball" style="background-color: {{item.color}};">{{item.points}}</view>
+                    <text class="ball-name">{{item.name}}</text><text class="muted">+{{item.points}} 分</text>
+                </button>
+            </view>
+            <button wx:if="{{table}}" class="button turn-button"
+                disabled="{{busy || !online || needsRefresh || table.next_ball === 'done'}}" bindtap="handleSwitch">未进球 / 换人</button>
+            <view class="actions">
+                <button class="button danger" disabled="{{busy || !online || needsRefresh || table.next_ball === 'done'}}"
+                    data-dialog="foul" bindtap="handleOpenDialog">记录犯规</button>
+                <button class="button" disabled="{{busy || !online || needsRefresh || !canUndo}}" bindtap="handleUndo">撤销上一笔</button>
+            </view>
+            <text class="notice">{{busy ? '正在保存…' : notice || '选择进球颜色，即可记录分数'}}</text>
+        </view>
+
+        <view class="card">
+            <text class="section-title">整场局分</text>
+            <view class="frame-totals"><text>{{players[0].name}}</text><text class="frame-score">{{players[0].frames}} : {{players[1].frames}}</text><text>{{players[1].name}}</text></view>
+            <text class="muted">先赢 {{winTarget}} 局获胜。每局结束后手动结算。</text>
+            <view wx:for="{{completedFrames}}" wx:key="id" class="frame-row">
+                <text>第 {{item.round}} 局</text><text>{{item.score}}</text><text class="frame-winner">{{item.winner}} 胜</text>
+            </view>
+        </view>
+        <view class="card">
+            <text class="section-title">结束本局</text>
+            <text class="muted settlement-note">确认现场已经结束本局后结算。平分时继续记分决出胜负，也可以认输本局。</text>
+            <button class="button primary" disabled="{{busy || !online || needsRefresh || !leaderName}}"
+                data-dialog="settle" bindtap="handleOpenDialog">结算本局</button>
+            <button class="text-button concede-button" disabled="{{busy || !online || needsRefresh}}"
+                data-dialog="concede" bindtap="handleOpenDialog">{{selectedName}} 认输本局</button>
+        </view>
+        <text class="muted message rules-note">红球后选彩球；未进球时换人结束单杆。红球清空后按黄、绿、棕、蓝、粉、黑顺序清彩。台面剩余分数不含未来罚分；自由球等特殊裁判场景暂不自动处理。</text>
+    </block>
+
+    <view wx:if="{{dialog}}" class="modal-mask" bindtap="handleCloseDialog" catchtouchmove="stopTap">
+        <view class="modal-card" catchtap="stopTap">
+            <text class="section-title">{{dialog === 'foul' ? '记录犯规' : dialog === 'concede' ? '认输本局' : '结算本局'}}</text>
+            <block wx:if="{{dialog === 'foul'}}">
+                <text class="modal-desc">{{selectedName}} 犯规，给 {{opponentName}} 加分。</text>
+                <view class="actions penalty-options">
+                    <button wx:for="{{penaltyOptions}}" wx:key="*this"
+                        class="button {{penalty === item ? 'chosen' : ''}}" disabled="{{busy}}"
+                        data-penalty="{{item}}" bindtap="handlePenalty">{{item}} 分</button>
+                </view>
+                <block wx:if="{{table}}">
+                    <text class="field-label">本次犯规离台红球数（0–{{table.reds_remaining}}）</text>
+                    <input class="number-input" type="number" value="{{redsRemoved}}" disabled="{{busy}}" bindinput="handleRedsRemoved" />
+                    <view class="switch-field"><text>判罚后由犯规球员继续击球</text><switch checked="{{replayFoul}}" disabled="{{busy}}" color="#6ad697" bindchange="handleReplayFoul" /></view>
+                </block>
+            </block>
+            <block wx:else>
+                <text wx:if="{{dialog === 'concede'}}" class="modal-desc">确认 {{selectedName}} 认输？本局判 {{opponentName}} 获胜，实际比分保留。</text>
+                <text wx:else class="modal-desc">当前比分 {{players[0].score}} : {{players[1].score}}，确认 {{leaderName}} 赢得本局？</text>
+                <text class="muted">结算后本局不能再修改或撤销。达到 {{winTarget}} 胜后整场自动结束，否则开始下一局。</text>
+            </block>
+            <text wx:if="{{!online}}" class="error-text message">网络已断开，请恢复连接后再记分</text>
+            <text wx:if="{{error}}" class="error-text message">{{error}}</text>
+            <view class="actions modal-actions">
+                <button class="button" disabled="{{busy}}" bindtap="handleCloseDialog">取消</button>
+                <button wx:if="{{needsRefresh}}" class="button primary" disabled="{{busy || !online}}" bindtap="loadMatch">刷新比分</button>
+                <button wx:else class="button primary" disabled="{{busy || !online}}" bindtap="handleConfirm">{{busy ? '正在保存…' : '确认'}}</button>
+            </view>
+        </view>
+    </view>
+</view>

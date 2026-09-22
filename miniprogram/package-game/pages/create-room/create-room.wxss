@@ -513,3 +513,10 @@
 .modal-button.is-disabled {
     opacity: 0.6;
 }
+
+.form-error {
+    display: block;
+    color: #ff969b;
+    margin-bottom: 20rpx;
+    font-size: 25rpx;
+}

@@ -44,7 +44,7 @@
         </view>
 
         <view class="card">
-            <text class="section-title">关键回合</text>
+            <text class="section-title">{{isSnooker ? '逐局比分' : '关键回合'}}</text>
             <block wx:if="{{timelines.length > 0}}">
                 <view wx:for="{{timelines}}" wx:key="title" class="timeline-item {{item.muted ? 'muted' : ''}}">
                     <view class="timeline-dot"></view>
