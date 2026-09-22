@@ -67,3 +67,53 @@ test('删除球员空返回后更新球员，无需额外请求，处理中不�
     assert.equal(room.data.isPlayerPending, false)
     assert.deepEqual(app.requests.map((request) => request.path), ['/match/leave'])
 })
+
+test('保存队列与开始提示顺序衔接，保存流程不会提前隐藏开始提示', async () => {
+    const { app, room, initial } = roomApp()
+    let releaseSave
+    let saves = 0
+    app.respond = ({ path, data }) => {
+        if (path === '/match/update') {
+            saves++
+            const saved = { ...initial, players: [], config: { ...initial.config, data: data.config_data } }
+            if (saves === 1) {
+                assert.equal(app.loadingTitle, '保存中')
+                return new Promise((resolve) => { releaseSave = () => resolve(saved) })
+            }
+            assert.equal(app.loadingTitle, '开始中')
+            return saved
+        }
+        assert.equal(path, '/match/start')
+        assert.equal(app.loadingTitle, '开始中')
+        return null
+    }
+    const saving = room.updateMatchIfChanged()
+    await new Promise(setImmediate)
+    const starting = room.handleStartGame()
+    assert.equal(app.loadingTitle, '保存中')
+    releaseSave()
+    await saving
+    await starting
+    assert.deepEqual(app.loadingEvents, [
+        { action: 'show', title: '保存中' }, { action: 'hide' },
+        { action: 'show', title: '开始中' }, { action: 'hide' },
+    ])
+    assert.equal(app.loadingTitle, '')
+    assert.match(app.navigations.at(-1), /snooker-game\?matchId=13$/)
+})
+
+test('开始前保存失败仍阻止开局，并关闭远端新增的 loading', async () => {
+    const { app, room } = roomApp()
+    app.respond = ({ path }) => {
+        assert.equal(path, '/match/update')
+        assert.equal(app.loadingTitle, '开始中')
+        throw new Error('保存失败')
+    }
+    await room.handleStartGame()
+    assert.deepEqual(app.requests.map((request) => request.path), ['/match/update'])
+    assert.equal(app.navigations.length, 0)
+    assert.equal(room.data.isStarting, false)
+    assert.equal(app.loadingTitle, '')
+    assert.match(room.data.formError, /保存失败/)
+    assert.deepEqual(app.loadingEvents, [{ action: 'show', title: '开始中' }, { action: 'hide' }])
+})

@@ -259,7 +259,7 @@ Page({
 
     // ===== 更新对局 =====
 
-    updateMatchIfChanged(): Promise<boolean> {
+    updateMatchIfChanged(withLoading = true): Promise<boolean> {
         var matchId = this.data.matchId
         var name = this.data.roomName.trim()
         var target = this.data.targetScore
@@ -285,6 +285,7 @@ Page({
         }
         // 串行保存，确保开始比赛前最后一次表单修改已写入服务端。
         this._saveQueue = this._saveQueue.then(async () => {
+            if (withLoading) wx.showLoading({ title: '保存中', mask: true })
             try {
                 var match = await updateMatch({ match_id: matchId, name: name, target_score: target, config_data: configData })
                 // 更新接口不加载球员，不能用返回的空 players 覆盖房间缓存。
@@ -296,6 +297,8 @@ Page({
             } catch (err) {
                 this.setData({ formError: (err as Error).message || '保存失败，请重试' })
                 return false
+            } finally {
+                if (withLoading) wx.hideLoading()
             }
         })
         return this._saveQueue
@@ -356,6 +359,7 @@ Page({
             return
         }
         this.setData({ isPlayerPending: true })
+        wx.showLoading({ title: '添加中', mask: true })
         try {
             var match = await joinMatch({ match_id: matchId, nick_name: name, player_type: 1 })
             this.applyPlayersToForm(match.players)
@@ -364,6 +368,7 @@ Page({
             console.error('添加球员失败', err)
             wx.showToast({ title: (err as Error).message || '添加失败', icon: 'none' })
         } finally {
+            wx.hideLoading()
             this.setData({ isPlayerPending: false })
         }
     },
@@ -421,6 +426,7 @@ Page({
         var matchId = this.data.matchId
         if (matchId && player.player_code) {
             this.setData({ isPlayerPending: true })
+            wx.showLoading({ title: '删除中', mask: true })
             try {
                 await leaveMatch({ match_id: matchId, player_code: player.player_code })
                 if (this._match) {
@@ -431,6 +437,7 @@ Page({
                 console.error('删除球员失败', err)
                 wx.showToast({ title: (err as Error).message || '删除失败', icon: 'none' })
             } finally {
+                wx.hideLoading()
                 this.setData({ isPlayerPending: false })
             }
         } else {
@@ -454,7 +461,10 @@ Page({
         }
         this.setData({ isStarting: true })
         try {
-            if (!await this.updateMatchIfChanged()) { return }
+            // 等前面的保存收起提示，再由开始流程统一管理 loading。
+            await this._saveQueue
+            wx.showLoading({ title: '开始中', mask: true })
+            if (!await this.updateMatchIfChanged(false)) { return }
             var match = await startMatch({ match_id: matchId })
             if (match) {
                 gameStore.setCurrentMatch(match)
@@ -468,6 +478,7 @@ Page({
             console.error('开始对局失败', err)
             wx.showToast({ title: (err as Error).message || '开始失败', icon: 'none' })
         } finally {
+            wx.hideLoading()
             this.setData({ isStarting: false })
         }
     },
@@ -489,6 +500,7 @@ Page({
         var matchId = this.data.matchId
         if (!matchId || this.data.isDeletingMatch) { return }
         this.setData({ isDeletingMatch: true })
+        wx.showLoading({ title: '删除中', mask: true })
         try {
             await deleteMatch({ match_id: matchId })
             gameStore.clearCurrentMatch()
@@ -496,8 +508,10 @@ Page({
         } catch (err) {
             console.error('删除对局失败', err)
             wx.showToast({ title: (err as Error).message || '删除失败', icon: 'none' })
+        } finally {
+            wx.hideLoading()
+            this.setData({ isDeletingMatch: false, showDeleteModal: false })
         }
-        this.setData({ isDeletingMatch: false, showDeleteModal: false })
     },
 
     /** 分享给朋友 */

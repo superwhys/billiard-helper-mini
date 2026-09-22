@@ -12,10 +12,12 @@ function harness() {
     const storage = new Map()
     const requests = []
     const navigations = []
+    const loadingEvents = []
     let definition
     let networkListener
     const runtime = {
-        requests, navigations, storage,
+        requests, navigations, storage, loadingEvents,
+        loadingTitle: '',
         respond: () => { throw new Error('Unexpected request') },
         network(isConnected) { networkListener?.({ isConnected }) },
         hasNetworkListener: () => !!networkListener,
@@ -29,6 +31,14 @@ function harness() {
         onNetworkStatusChange: (listener) => { networkListener = listener },
         offNetworkStatusChange: (listener) => { if (listener === networkListener) networkListener = null },
         showToast() {},
+        showLoading(options) {
+            runtime.loadingTitle = options.title
+            loadingEvents.push({ action: 'show', title: options.title })
+        },
+        hideLoading() {
+            runtime.loadingTitle = ''
+            loadingEvents.push({ action: 'hide' })
+        },
         navigateTo: (data) => navigations.push(data.url),
         redirectTo: (data) => navigations.push(data.url),
         navigateBack() {},

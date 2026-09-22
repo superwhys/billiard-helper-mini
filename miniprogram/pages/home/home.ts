@@ -137,7 +137,8 @@ Page({
         var userId = userStore.getUserId()
         var targetScore = 3
         if (matchType === '9ball') { targetScore = 1 }
-        
+
+        wx.showLoading({ title: '创建中', mask: true })
         try {
             var match = await createMatch({
                 match_type: matchType,
@@ -151,6 +152,8 @@ Page({
         } catch (err) {
             console.error('创建对局失败', err)
             wx.showToast({ title: (err as Error).message || '创建失败', icon: 'none' })
+        } finally {
+            wx.hideLoading()
         }
     },
 

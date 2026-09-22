@@ -2,7 +2,7 @@
 Page({
     data: {
         appName: '台球计分助手',
-        version: '1.0.8',
+        version: '1.0.10',
         envLabel: '开发版',
     },
 

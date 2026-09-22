@@ -1,6 +1,6 @@
 {
-  "name": "miniprogram-ts-quickstart",
-  "version": "1.0.0",
+  "name": "billiard-helper-mini",
+  "version": "1.0.10",
   "description": "",
   "scripts": {
     "typecheck": "tsc --noEmit --skipLibCheck",
